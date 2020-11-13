@@ -1,14 +1,14 @@
 from GenericScraper import GenericScraper
 from utility.FileReader import *
 from selectorlib import Extractor
-from beans.Prodotto import  Prodotto
+from beans.Prodotto import Prodotto
 import requests
 import time
 
 class AmazonScraper(GenericScraper):
     # TODO: mettere i path relativi
-    __extractor_file = 'D:\\Mario\\Reti geografiche\\RetiGeografiche20-21\\files\\amazon_selector.yml'
-    __input_file = 'D:\\Mario\\Reti geografiche\\RetiGeografiche20-21\\files\\amazon_product_list.txt'
+    __extractor_file = 'files\\amazon_selector.yml'
+    __input_file = 'files\\amazon_product_list.txt'
     __deelay_time = 10
 
     # TODO: controllare se sono tutti necessari
@@ -30,22 +30,23 @@ class AmazonScraper(GenericScraper):
         pass
 
     def get_offers(self) -> list:
-        urls = readFromFile(self.__input_file)
-        product_list = self.__scrape(urls)
+        prodotti = readFromFile(self.__input_file)
+        print("Prodotti:", prodotti)
+        product_list = self.__scrape(prodotti)
         # print('[AMAZON SCRAPER] result:', type(product_list), 'content:', type(product_list[0]))
         # print(product_list)
         return product_list
 
     # TODO: Integrazione con il bot Telegram
     # urls è una lista di url
-    def __scrape(self, urls: list) -> list:
+    def __scrape(self, prodotti: list) -> list:
         i = 0
-        prodotti = []
+
         # params è una lista di prodotti
-        for url in urls:
+        for prodotto in prodotti:
             # Eseguo la richiesta per prelevare i dati
             # request contiene la risposta
-            request = requests.get(url, headers=self.__headers)
+            request = requests.get(prodotto.url, headers=self.__headers)
 
             print('status: ', request.status_code)
 
@@ -53,9 +54,9 @@ class AmazonScraper(GenericScraper):
             # TODO: se l'errore è 500 la richiesta viene fatta dopo un pò
             if request.status_code > 500:
                 if "To discuss automated access to Amazon data please contact" in request.text:
-                    print("Page %s was blocked by Amazon. Please try using better proxies\n" % url)
+                    print("Page %s was blocked by Amazon. Please try using better proxies\n" % prodotto.url)
                 else:
-                    print("Page %s must have been blocked by Amazon as the status code was %d" % (url, request.status_code))
+                    print("Page %s must have been blocked by Amazon as the status code was %d" % (prodotto.url, request.status_code))
                 return []
 
             # Crea l'estrattore per fare webscrape
@@ -64,11 +65,11 @@ class AmazonScraper(GenericScraper):
             # val rappresenta i prodotti letti dalla pagina (per i prodotti multipli è un dizionario)
             # print('REQUEST: ', request.text)
             val = extractor.extract(request.text)
-            prodotti.append(Prodotto(val['name'], val['price'], url))
+            prodotto.prezzo = val['price']
 
             # print(type(val))
             # Qui dovrei avvisare il main e passargli i valori
-            if i < urls.__len__() - 1: time.sleep(self.__deelay_time)
+            if i < prodotti.__len__() - 1: time.sleep(self.__deelay_time)
             i += 1
 
         return prodotti

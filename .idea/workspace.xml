@@ -2,18 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7e399870-cab6-45fe-bb76-b3e582842500" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/AmazonScraper.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/GenericScraper.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/beans/Prodotto.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/files/amazon_multiple_product_list.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/files/amazon_multiple_selectors.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/files/amazon_product_list.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/files/amazon_selector.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/files/amazon_single_product_list.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/files/amazon_single_selectors.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/utility/FileReader.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/utility/DatabaseManager.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AmazonScraper.py" beforeDir="false" afterPath="$PROJECT_DIR$/AmazonScraper.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/files/amazon_product_list.txt" beforeDir="false" afterPath="$PROJECT_DIR$/files/amazon_product_list.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utility/FileReader.py" beforeDir="false" afterPath="$PROJECT_DIR$/utility/FileReader.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -36,7 +30,7 @@
     <ConfirmationsSetting value="2" id="Add" />
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/files" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -105,7 +99,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
