@@ -1,0 +1,7 @@
+name:
+    css: '.product-name'
+    type: Text
+price:
+    css: '.price'
+    type: Text
+

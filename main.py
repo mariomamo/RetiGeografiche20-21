@@ -1,16 +1,18 @@
 import psycopg2
 import GenericScraper
 from AmazonScraper import AmazonScraper
+from EpriceScraper import EpriceScraper
+from MediaworldScraper import MediaworldScraper
 from utility.DatabaseManager import DatabaseManager
 
 
 if __name__ == "__main__":
     databaseManager = DatabaseManager()
-    scrapers = [AmazonScraper()]
+    scrapers = [AmazonScraper(), EpriceScraper(), MediaworldScraper()]
+    #scrapers = [MediaworldScraper()]
     for scraper in scrapers:
+        scrapertype = type(scraper)
         prodotti = scraper.get_offers()
-        for prodotto in prodotti:
-            #print(prodotto.nome + " - " + prodotto.prezzo + " - " + prodotto.url)
-            databaseManager.insert(prodotto)
+        databaseManager.insert(prodotti, scrapertype)
 
 

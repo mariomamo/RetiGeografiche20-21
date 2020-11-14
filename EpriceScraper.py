@@ -5,10 +5,10 @@ from beans.Prodotto import Prodotto
 import requests
 import time
 
-class AmazonScraper(GenericScraper):
+class EpriceScraper(GenericScraper):
     # TODO: mettere i path relativi
-    __extractor_file = 'files\\amazon_selector.yml'
-    __input_file = 'files\\amazon_product_list.txt'
+    __extractor_file = 'files\\eprice_selector.yml'
+    __input_file = 'files\\eprice_product_list.txt'
     __deelay_time = 10
 
     # TODO: controllare se sono tutti necessari
@@ -22,8 +22,7 @@ class AmazonScraper(GenericScraper):
         'sec-fetch-mode': 'navigate',
         'sec-fetch-user': '?1',
         'sec-fetch-dest': 'document',
-        'referer': 'https://www.amazon.com/',
-        'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
+        'referer': 'https://www.www.eprice.it/',
     }
 
     def __init__(self):
@@ -66,14 +65,10 @@ class AmazonScraper(GenericScraper):
             # print('REQUEST: ', request.text)
             val = extractor.extract(request.text)
 
-            #Rimuovo il simbolo dell'euro
-            price = val['price'][0: val["price"].__len__()-2]
-
-            #formatto la stringa per convertirla in float
-            price = price.replace('.', '').replace(',', '.')
+            # Rimuovo il simbolo dell'euro
+            price = val['price'].replace('.', '').replace(',', '.')
 
             prodotto.prezzo = float(price)
-
             # Qui dovrei avvisare il main e passargli i valori
             if i < prodotti.__len__() - 1: time.sleep(self.__deelay_time)
             i += 1

@@ -1,5 +1,7 @@
 import psycopg2
-from beans.Prodotto import Prodotto
+from AmazonScraper import AmazonScraper
+from EpriceScraper import EpriceScraper
+from MediaworldScraper import MediaworldScraper
 from datetime import datetime
 
 class DatabaseManager:
@@ -17,9 +19,23 @@ class DatabaseManager:
 
         print("CONN: ", self.__conn)
 
-    def insert(self, prodotto):
+    def getTable(self, scrapertype):
+        if scrapertype == AmazonScraper:
+            return "prodottiamazon"
+        elif scrapertype == EpriceScraper:
+            return "prodottieprice"
+        else:
+            return "prodottimediaworld"
+
+
+
+
+    def insert(self, prodotti, scrapertype):
         #sql = "INSERT INTO 'ProdottiAmazon' (Nome, URL, Prezzo) VALUES({}, {}, {}".format()
+        tablename = self.getTable(scrapertype)
+
         with self.__conn.cursor() as cursor:
-            cursor.execute("INSERT INTO \"ProdottiAmazon\" (nome, url, prezzo, data) VALUES(%s, %s, %s, %s)", (prodotto.nome, prodotto.url, 200, datetime.now()))
+            for prodotto in prodotti:
+                cursor.execute("INSERT INTO "+tablename+" (nome, url, prezzo, data) VALUES(%s, %s, %s, %s)", (prodotto.nome, prodotto.url, prodotto.prezzo, datetime.now()))
 
 
