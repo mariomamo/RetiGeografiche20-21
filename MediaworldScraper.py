@@ -3,8 +3,8 @@ from utility.FileReader import *
 
 
 class MediaworldScraper(GenericScraper):
-    extractor_file = 'files\\mediaworld_selector.yml'
-    input_file = 'files\\mediaworld_product_list.txt'
+    extractor_file = 'files/mediaworld_selector.yml'
+    input_file = 'files/mediaworld_product_list.txt'
     deelay_time = 10
     maximum_request = 3
 
