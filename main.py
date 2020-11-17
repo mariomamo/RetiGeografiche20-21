@@ -2,8 +2,7 @@ from AmazonScraper import AmazonScraper
 from EpriceScraper import EpriceScraper
 from MediaworldScraper import MediaworldScraper
 from utility.DatabaseManager import DatabaseManager
-from multiprocessing import Process
-from multiprocessing import Queue
+from multiprocessing import Process, Queue
 import time
 from multiprocessing import JoinableQueue
 
@@ -20,7 +19,7 @@ def startscrape(jobs, report):
 
 
 def create_process(jobs, report):
-    for _ in range(4):
+    for _ in range(3):
         process = Process(target=startscrape, args=(jobs, report))
         process.daemon = True
         process.start()
@@ -42,7 +41,8 @@ def waitForComplete(jobs, report):
 if __name__ == "__main__":
     scrapers = [AmazonScraper(), EpriceScraper(), MediaworldScraper()]
     #scrapers = [AmazonScraper()]
-    report = JoinableQueue()
+
+    report = Queue()
     jobs = JoinableQueue()
 
     create_process(jobs, report)
