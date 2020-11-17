@@ -8,6 +8,11 @@ class MediaworldScraper(GenericScraper):
     deelay_time = 10
     maximum_request = 3
 
+    # TODO: mettere i path relativi
+    __extractor_file = 'files/mediaworld_selector.yml'
+    __input_file = 'files/mediaworld_product_list.txt'
+    __deelay_time = 10
+
     # TODO: controllare se sono tutti necessari
     # Necessario altrimenti Amazon non risponde
     headers = {

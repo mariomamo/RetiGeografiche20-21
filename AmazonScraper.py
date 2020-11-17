@@ -3,10 +3,10 @@ from utility.FileReader import *
 
 
 class AmazonScraper(GenericScraper):
-    extractor_file = 'files\\amazon_selector.yml'
-    input_file = 'files\\amazon_product_list.txt'
-    deelay_time = 10
-    # __maximum_request = 3
+    # TODO: mettere i path relativi
+    __extractor_file = 'files/amazon_selector.yml'
+    __input_file = 'files/amazon_product_list.txt'
+    __deelay_time = 10
 
     # TODO: controllare se sono tutti necessari
     # Necessario altrimenti Amazon non risponde

@@ -3,10 +3,10 @@ from utility.FileReader import *
 
 
 class EpriceScraper(GenericScraper):
-    extractor_file = 'files\\eprice_selector.yml'
-    input_file = 'files\\eprice_product_list.txt'
-    deelay_time = 10
-    maximum_request = 3
+    # TODO: mettere i path relativi
+    __extractor_file = 'files/eprice_selector.yml'
+    __input_file = 'files/eprice_product_list.txt'
+    __deelay_time = 10
 
     # TODO: controllare se sono tutti necessari
     # Necessario altrimenti Amazon non risponde

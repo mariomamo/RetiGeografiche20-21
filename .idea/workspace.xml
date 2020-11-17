@@ -6,6 +6,9 @@
       <change beforePath="$PROJECT_DIR$/files/amazon_product_list.txt" beforeDir="false" afterPath="$PROJECT_DIR$/files/amazon_product_list.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/files/amazon_selector.yml" beforeDir="false" afterPath="$PROJECT_DIR$/files/amazon_selector.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/MediaworldScraper.py" beforeDir="false" afterPath="$PROJECT_DIR$/MediaworldScraper.py" afterDir="false" />
+>>>>>>> Stashed changes
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
