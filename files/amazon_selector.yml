@@ -4,6 +4,9 @@ name:
 price:
     css: '#priceblock_ourprice'
     type: Text
+price_deal:
+    css: '#priceblock_dealprice'
+    type: Text
 short_description:
     css: '#featurebullets_feature_div'
     type: Text

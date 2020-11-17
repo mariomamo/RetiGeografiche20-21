@@ -52,6 +52,13 @@ class GenericScraper:
                         price = price[0: price.__len__()-2]
 
                     print("PREZZO: ", price)
+                elif val['price_deal'] is not None:
+                    price = val['price_deal']
+                    # Rimuovo il simbolo dell'euro
+                    if price[price.__len__() - 1] == '€':
+                        price = price[0: price.__len__() - 2]
+
+                    print("PREZZO: ", price)
                 else:
                     print("NULLONE")
                     price = '-1'

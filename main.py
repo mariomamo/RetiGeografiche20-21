@@ -15,7 +15,7 @@ def startscrape(scraper, **kwargs):
 
 if __name__ == "__main__":
     scrapers = [AmazonScraper(), EpriceScraper(), MediaworldScraper()]
-    #scrapers = [MediaworldScraper()]
+    #scrapers = [AmazonScraper()]
     for scraper in scrapers:
         p = Process(target=startscrape, args=(scraper,))
         p.start()
