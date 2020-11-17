@@ -31,7 +31,7 @@ class MediaworldScraper(GenericScraper):
         prodotti = readFromFile(self.__input_file)
         print("Prodotti:", prodotti)
         product_list = self.__scrape(prodotti)
-        # print('[AMAZON SCRAPER] result:', type(product_list), 'content:', type(product_list[0]))
+        # print('[MEDIAWORLD SCRAPER] result:', type(product_list), 'content:', type(product_list[0]))
         # print(product_list)
         return product_list
 
