@@ -3,13 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="7e399870-cab6-45fe-bb76-b3e582842500" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AmazonScraper.py" beforeDir="false" afterPath="$PROJECT_DIR$/AmazonScraper.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/EpriceScraper.py" beforeDir="false" afterPath="$PROJECT_DIR$/EpriceScraper.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GenericScraper.py" beforeDir="false" afterPath="$PROJECT_DIR$/GenericScraper.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MediaworldScraper.py" beforeDir="false" afterPath="$PROJECT_DIR$/MediaworldScraper.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/files/amazon_product_list.txt" beforeDir="false" afterPath="$PROJECT_DIR$/files/amazon_product_list.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/files/eprice_product_list.txt" beforeDir="false" afterPath="$PROJECT_DIR$/files/eprice_product_list.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/files/mediaworld_product_list.txt" beforeDir="false" afterPath="$PROJECT_DIR$/files/mediaworld_product_list.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/files/amazon_selector.yml" beforeDir="false" afterPath="$PROJECT_DIR$/files/amazon_selector.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />

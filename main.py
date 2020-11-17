@@ -6,8 +6,8 @@ from utility.DatabaseManager import DatabaseManager
 
 if __name__ == "__main__":
     databaseManager = DatabaseManager()
-    scrapers = [AmazonScraper(), EpriceScraper(), MediaworldScraper()]
-    #scrapers = [MediaworldScraper()]
+    #scrapers = [AmazonScraper(), EpriceScraper(), MediaworldScraper()]
+    scrapers = [AmazonScraper()]
     for scraper in scrapers:
         # TODO: Mettere più Thread
         scrapertype = type(scraper)
