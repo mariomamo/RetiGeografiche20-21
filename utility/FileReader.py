@@ -1,6 +1,7 @@
 from beans.Prodotto import Prodotto
 SEPARATOR = "|%!|"
 
+
 def readFromFile(filepath: str):
     lista_prodotti = []
     with open(filepath, 'r') as file:

@@ -1,12 +1,11 @@
 from GenericScraper import GenericScraper
 from utility.FileReader import *
 from selectorlib import Extractor
-from beans.Prodotto import Prodotto
 import requests
 import time
 
+
 class AmazonScraper(GenericScraper):
-    # TODO: mettere i path relativi
     __extractor_file = 'files\\amazon_selector.yml'
     __input_file = 'files\\amazon_product_list.txt'
     __deelay_time = 10
@@ -66,10 +65,10 @@ class AmazonScraper(GenericScraper):
             # print('REQUEST: ', request.text)
             val = extractor.extract(request.text)
 
-            #Rimuovo il simbolo dell'euro
+            # Rimuovo il simbolo dell'euro
             price = val['price'][0: val["price"].__len__()-2]
 
-            #formatto la stringa per convertirla in float
+            # formatto la stringa per convertirla in float
             price = price.replace('.', '').replace(',', '.')
 
             prodotto.prezzo = float(price)

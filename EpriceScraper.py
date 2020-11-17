@@ -1,12 +1,11 @@
 from GenericScraper import GenericScraper
 from utility.FileReader import *
 from selectorlib import Extractor
-from beans.Prodotto import Prodotto
 import requests
 import time
 
+
 class EpriceScraper(GenericScraper):
-    # TODO: mettere i path relativi
     __extractor_file = 'files\\eprice_selector.yml'
     __input_file = 'files\\eprice_product_list.txt'
     __deelay_time = 10

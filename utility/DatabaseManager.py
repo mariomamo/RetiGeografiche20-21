@@ -4,6 +4,7 @@ from EpriceScraper import EpriceScraper
 from MediaworldScraper import MediaworldScraper
 from datetime import datetime
 
+
 class DatabaseManager:
 
     __conn = None
@@ -26,9 +27,6 @@ class DatabaseManager:
             return "prodottieprice"
         else:
             return "prodottimediaworld"
-
-
-
 
     def insert(self, prodotti, scrapertype):
         #sql = "INSERT INTO 'ProdottiAmazon' (Nome, URL, Prezzo) VALUES({}, {}, {}".format()

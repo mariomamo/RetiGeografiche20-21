@@ -1,5 +1,3 @@
-import psycopg2
-import GenericScraper
 from AmazonScraper import AmazonScraper
 from EpriceScraper import EpriceScraper
 from MediaworldScraper import MediaworldScraper
