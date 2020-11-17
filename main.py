@@ -9,6 +9,7 @@ if __name__ == "__main__":
     scrapers = [AmazonScraper(), EpriceScraper(), MediaworldScraper()]
     #scrapers = [MediaworldScraper()]
     for scraper in scrapers:
+        # TODO: Mettere più Thread
         scrapertype = type(scraper)
         prodotti = scraper.get_offers()
         databaseManager.insert(prodotti, scrapertype)

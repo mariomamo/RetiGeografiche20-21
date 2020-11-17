@@ -1,18 +1,16 @@
 from GenericScraper import GenericScraper
 from utility.FileReader import *
-from selectorlib import Extractor
-import requests
-import time
 
 
 class MediaworldScraper(GenericScraper):
-    __extractor_file = 'files\\mediaworld_selector.yml'
-    __input_file = 'files\\mediaworld_product_list.txt'
-    __deelay_time = 10
+    extractor_file = 'files\\mediaworld_selector.yml'
+    input_file = 'files\\mediaworld_product_list.txt'
+    deelay_time = 10
+    maximum_request = 3
 
     # TODO: controllare se sono tutti necessari
     # Necessario altrimenti Amazon non risponde
-    __headers = {
+    headers = {
         'dnt': '1',
         'upgrade-insecure-requests': '1',
         'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36',
@@ -28,49 +26,12 @@ class MediaworldScraper(GenericScraper):
         pass
 
     def get_offers(self) -> list:
-        prodotti = readFromFile(self.__input_file)
+        prodotti = readFromFile(self.input_file)
         print("Prodotti:", prodotti)
-        product_list = self.__scrape(prodotti)
+        product_list = self.scrape(prodotti)
         # print('[MEDIAWORLD SCRAPER] result:', type(product_list), 'content:', type(product_list[0]))
         # print(product_list)
         return product_list
-
-    # TODO: Integrazione con il bot Telegram
-    # urls è una lista di url
-    def __scrape(self, prodotti: list) -> list:
-        i = 0
-
-        # params è una lista di prodotti
-        for prodotto in prodotti:
-            # Eseguo la richiesta per prelevare i dati
-            # request contiene la risposta
-            request = requests.get(prodotto.url, headers=self.__headers)
-
-            print('status: ', request.status_code)
-
-            # Controllo errori
-            # TODO: se l'errore è 500 la richiesta viene fatta dopo un pò
-            if request.status_code > 500:
-                if "To discuss automated access to Amazon data please contact" in request.text:
-                    print("Page %s was blocked by Amazon. Please try using better proxies\n" % prodotto.url)
-                else:
-                    print("Page %s must have been blocked by Amazon as the status code was %d" % (prodotto.url, request.status_code))
-                return []
-
-            # Crea l'estrattore per fare webscrape
-            extractor = Extractor.from_yaml_file(self.__extractor_file)
-
-            # val rappresenta i prodotti letti dalla pagina (per i prodotti multipli è un dizionario)
-            # print('REQUEST: ', request.text)
-            val = extractor.extract(request.text)
-            prodotto.prezzo = float(val['price'])
-
-            # print(type(val))
-            # Qui dovrei avvisare il main e passargli i valori
-            if i < prodotti.__len__() - 1: time.sleep(self.__deelay_time)
-            i += 1
-
-        return prodotti
 
     # Filtra i prodotti corretti in base al nome e alle caratteristiche
     def __filter_products(self, products_list, params) -> list:
