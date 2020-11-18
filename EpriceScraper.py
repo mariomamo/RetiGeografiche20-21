@@ -6,7 +6,8 @@ class EpriceScraper(GenericScraper):
     # TODO: mettere i path relativi
     extractor_file = 'files/eprice_selector.yml'
     input_file = 'files/eprice_product_list.txt'
-    deelay_time = 10
+    # Incredibile, e-price si fa floodare
+    deelay_time = 0
 
     # TODO: controllare se sono tutti necessari
     # Necessario altrimenti Amazon non risponde
@@ -19,7 +20,7 @@ class EpriceScraper(GenericScraper):
         'sec-fetch-mode': 'navigate',
         'sec-fetch-user': '?1',
         'sec-fetch-dest': 'document',
-        'referer': 'https://www.www.eprice.it/',
+        'referer': 'https://www.eprice.it/',
     }
 
     def __init__(self):

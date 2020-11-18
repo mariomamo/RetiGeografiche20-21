@@ -45,23 +45,40 @@ class GenericScraper:
                 val = extractor.extract(request.text)
 
                 # Se c'è il prezzo
-                if val['price'] is not None:
+                price = None
+                if val['price'] is not None and val['price'].__len__() > 0:
                     price = val['price']
-                    # Rimuovo il simbolo dell'euro
-                    if price[price.__len__()-1] == '€':
-                        price = price[0: price.__len__()-2]
-
-                    print("PREZZO: ", price)
-                elif val['price_deal'] is not None:
+                elif val['price_deal'] is not None and val['price_deal'].__len__() > 0:
                     price = val['price_deal']
-                    # Rimuovo il simbolo dell'euro
+
+                # Rimuovo il simbolo dell'euro
+                if price is not None:
                     if price[price.__len__() - 1] == '€':
                         price = price[0: price.__len__() - 2]
-
                     print("PREZZO: ", price)
                 else:
                     print("NULLONE")
                     price = '-1'
+
+
+                # if val['price'] is not None and val['price'].__len__() > 0:
+                #     price = val['price']
+                #     # Rimuovo il simbolo dell'euro
+                #     print("PRICE: " + price)
+                #     if price[price.__len__() - 1] == '€':
+                #         price = price[0: price.__len__() - 2]
+                #
+                #     print("PREZZO: ", price)
+                # elif val['price_deal'] is not None and val['price_deal'].__len__() > 0:
+                #     price = val['price_deal']
+                #     # Rimuovo il simbolo dell'euro
+                #     if price[price.__len__() - 1] == '€':
+                #         price = price[0: price.__len__() - 2]
+                #
+                #     print("PREZZO: ", price)
+                # else:
+                #     print("NULLONE")
+                #     price = '-1'
 
                 # formatto la stringa per convertirla in float
                 if '.' in price and ',' in price:

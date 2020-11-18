@@ -4,4 +4,7 @@ name:
 price:
     css: '.big'
     type: Text
+price_deal:
+    css: '.big'
+    type: Text
 

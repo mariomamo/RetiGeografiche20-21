@@ -38,9 +38,10 @@ def waitForComplete(jobs, report):
         DatabaseManager.insert(tupla[0], tupla[1])
 
 
+
 if __name__ == "__main__":
     scrapers = [AmazonScraper(), EpriceScraper(), MediaworldScraper()]
-    #scrapers = [AmazonScraper()]
+    #scrapers = [EpriceScraper()]
 
     report = Queue()
     jobs = JoinableQueue()

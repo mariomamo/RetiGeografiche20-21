@@ -2,6 +2,9 @@ name:
     css: '.product-name'
     type: Text
 price:
-    css: '.price'
+    css: '.price-container'
+    type: Text
+price_deal:
+    css: '.price-start'
     type: Text
 
