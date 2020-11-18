@@ -27,7 +27,7 @@ class EpriceScraper(GenericScraper):
 
     def get_offers(self) -> list:
         prodotti = readFromFile(self.input_file)
-        print("Prodotti:", prodotti)
+        #print("Prodotti:", prodotti)
         product_list = self.scrape(prodotti)
         # print('[E-PRICE SCRAPER] result:', type(product_list), 'content:', type(product_list[0]))
         # print(product_list)
