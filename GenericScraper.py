@@ -86,7 +86,10 @@ class GenericScraper:
                 else:
                     price = price.replace(',', '.')
 
-                prodotto.prezzo = float(price)
+                try:
+                    prodotto.prezzo = float(price)
+                except:
+                    print("Eccezzzion MANNAAAAGG")
 
                 # Qui dovrei avvisare il main e passargli i valori
                 if i < prodotti.__len__() - 1: time.sleep(self.deelay_time)
