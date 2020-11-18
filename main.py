@@ -39,8 +39,8 @@ def waitForComplete(jobs, report):
 
 
 if __name__ == "__main__":
-    scrapers = [AmazonScraper(), EpriceScraper(), MediaworldScraper()]
-    #scrapers = [AmazonScraper()]
+    #scrapers = [AmazonScraper(), EpriceScraper(), MediaworldScraper()]
+    scrapers = [MediaworldScraper()]
 
     report = Queue()
     jobs = JoinableQueue()
