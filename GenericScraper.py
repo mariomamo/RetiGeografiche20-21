@@ -2,6 +2,7 @@ from abc import ABCMeta, abstractmethod
 import time
 import requests
 from selectorlib import Extractor
+import re
 
 
 class GenericScraper:
@@ -23,18 +24,24 @@ class GenericScraper:
         for prodotto in prodotti:
             # Eseguo la richiesta per prelevare i dati
             # request contiene la risposta
-            request = requests.get(prodotto.url, headers=self.headers)
+            try:
+                request = requests.get(prodotto.url, headers=self.headers)
+            except:
+                print("ERRORE RICHIESTA")
 
             print('status: ', request.status_code, " - ", prodotto.url)
 
             # Controllo errori
             # TODO: se l'errore è 500 la richiesta viene fatta dopo un pò
             richieste = 0
-            while request.status_code != 200 and richieste < self.maximum_request :
+            while request.status_code != 200 and richieste < self.maximum_request:
                 richieste += 1
                 time.sleep(3)
-                request = requests.get(prodotto.url, headers=self.headers)
-                print("TENTATIVO ", richieste)
+                try:
+                    request = requests.get(prodotto.url, headers=self.headers)
+                    print("TENTATIVO ", richieste)
+                except:
+                    print("ERRORE RICHIESTA")
 
             if request.status_code == 200:
                 # Crea l'estrattore per fare webscrape
@@ -51,40 +58,16 @@ class GenericScraper:
                 elif val['price_deal'] is not None and val['price_deal'].__len__() > 0:
                     price = val['price_deal']
 
-                # Rimuovo il simbolo dell'euro
-                if price is not None:
-                    if price[price.__len__() - 1] == '€':
-                        price = price[0: price.__len__() - 2]
-                    print("PREZZO: ", price)
-                else:
-                    print("NULLONE")
-                    price = '-1'
+                # Rimuovo eventuali caratteri diversi dai numeri che possono esserci all'interno, compreso il simbolo €
+                price = self.fixPrice(price)
+                print("PRICE: ", price)
 
-
-                # if val['price'] is not None and val['price'].__len__() > 0:
-                #     price = val['price']
-                #     # Rimuovo il simbolo dell'euro
-                #     print("PRICE: " + price)
-                #     if price[price.__len__() - 1] == '€':
-                #         price = price[0: price.__len__() - 2]
-                #
-                #     print("PREZZO: ", price)
-                # elif val['price_deal'] is not None and val['price_deal'].__len__() > 0:
-                #     price = val['price_deal']
-                #     # Rimuovo il simbolo dell'euro
-                #     if price[price.__len__() - 1] == '€':
-                #         price = price[0: price.__len__() - 2]
-                #
-                #     print("PREZZO: ", price)
-                # else:
-                #     print("NULLONE")
-                #     price = '-1'
-
+                # NON DOVREBBE PIU' ESSERE NECESSARIO
                 # formatto la stringa per convertirla in float
-                if '.' in price and ',' in price:
-                    price = price.replace('.', '').replace(',', '.')
-                else:
-                    price = price.replace(',', '.')
+                # if '.' in price and ',' in price:
+                #     price = price.replace('.', '').replace(',', '.')
+                # else:
+                #     price = price.replace(',', '.')
 
                 try:
                     prodotto.prezzo = float(price)
@@ -98,3 +81,48 @@ class GenericScraper:
                 result.append(prodotto)
 
         return result
+
+    def fixPrice(self, price: str):
+        # return re.sub('[^0-9]', '', price)
+        if price is None:
+            return -1
+
+        print("price: ", price)
+
+        # Prendo tutti i numeri che sono nella stringa, facendo lo split con la ','
+        # Restituisce un array contenente tutti i numeri
+        # Esempio:
+        # Input: 1.497,59, Output: ['1', '497', '59']
+        # Input: 1189, Output: ['1189', '00']
+        # Eventuali caratteri che non sono numeri vengono scartati
+        temp = re.findall(r"[-+]?\d*\\,\d+|\d+", price)
+
+        # print("TEMP: ", temp)
+
+        # Se contiene solo due elementi restituisce il primo e il secondo divisi dal punto
+        if temp.__len__() == 2:
+            return temp[0] + "." + temp[1]
+        elif temp.__len__() == 3:
+            # Altrimenti restituisce il primo e il secondo concatenati e aggiunge un punto tra la
+            # concatenazione di questi due e il terzo
+            return temp[0] + temp[1] + "." + temp[2]
+
+        # VECCHIO METODO
+        # if val['price'] is not None and val['price'].__len__() > 0:
+        #     price = val['price']
+        #     # Rimuovo il simbolo dell'euro
+        #     print("PRICE: " + price)
+        #     if price[price.__len__() - 1] == '€':
+        #         price = price[0: price.__len__() - 2]
+        #
+        #     print("PREZZO: ", price)
+        # elif val['price_deal'] is not None and val['price_deal'].__len__() > 0:
+        #     price = val['price_deal']
+        #     # Rimuovo il simbolo dell'euro
+        #     if price[price.__len__() - 1] == '€':
+        #         price = price[0: price.__len__() - 2]
+        #
+        #     print("PREZZO: ", price)
+        # else:
+        #     print("NULLONE")
+        #     price = '-1'

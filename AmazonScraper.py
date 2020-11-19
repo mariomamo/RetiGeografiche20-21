@@ -1,6 +1,6 @@
 from GenericScraper import GenericScraper
 from utility.FileReader import *
-
+from random import randrange
 
 class AmazonScraper(GenericScraper):
     # TODO: mettere i path relativi
@@ -27,7 +27,7 @@ class AmazonScraper(GenericScraper):
     headers = {
         'dnt': '1',
         'upgrade-insecure-requests': '1',
-        'user-agent': __user_agents[__user_agents.__len__()-3],
+        'user-agent': __user_agents[randrange(__user_agents.__len__())],
         'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
         'sec-fetch-site': 'same-origin',
         'sec-fetch-mode': 'navigate',
@@ -68,3 +68,7 @@ class AmazonScraper(GenericScraper):
                     break
 
         return result
+
+    # def fixPrice(self, price: str):
+    #     print("OKOK")
+    #     return 100
