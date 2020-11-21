@@ -1,5 +1,6 @@
 from GenericScraper import GenericScraper
 from utility.FileReader import *
+from random import randrange
 
 
 class MediaworldScraper(GenericScraper):
@@ -9,26 +10,23 @@ class MediaworldScraper(GenericScraper):
     maximum_request = 3
 
     # TODO: mettere i path relativi
-    __extractor_file = 'files/mediaworld_selector.yml'
-    __input_file = 'files/mediaworld_product_list.txt'
-    __deelay_time = 10
-
-    # TODO: controllare se sono tutti necessari
-    # Necessario altrimenti Amazon non risponde
-    headers = {
-        'dnt': '1',
-        'upgrade-insecure-requests': '1',
-        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36',
-        'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-        'sec-fetch-site': 'same-origin',
-        'sec-fetch-mode': 'navigate',
-        'sec-fetch-user': '?1',
-        'sec-fetch-dest': 'document',
-        'referer': 'https://www.mediaworld.it',
-    }
+    # __extractor_file = 'files/mediaworld_selector.yml'
+    # __input_file = 'files/mediaworld_product_list.txt'
+    # __deelay_time = 10
 
     def __init__(self):
-        pass
+        # TODO: controllare se sono tutti necessari
+        self.headers = {
+            'dnt': '1',
+            'upgrade-insecure-requests': '1',
+            'user-agent': self.user_agents[randrange(self.user_agents.__len__())],
+            'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+            'sec-fetch-site': 'same-origin',
+            'sec-fetch-mode': 'navigate',
+            'sec-fetch-user': '?1',
+            'sec-fetch-dest': 'document',
+            'referer': 'https://www.mediaworld.it',
+        }
 
     def get_offers(self) -> list:
         prodotti = readFromFile(self.input_file)
@@ -37,6 +35,15 @@ class MediaworldScraper(GenericScraper):
         # print('[MEDIAWORLD SCRAPER] result:', type(product_list), 'content:', type(product_list[0]))
         # print(product_list)
         return product_list
+
+    def getPrice(self, val: dict):
+        # Chiamo la superclasse
+        price = super(MediaworldScraper, self).getPrice(val)
+        # Se la superclasse non riesce a leggere il risultato provo a leggerlo così
+        if price is None and val['price_deal'] is not None and val['price_deal'].__len__() > 0:
+            price = val['price_deal']
+
+        return price
 
     # Filtra i prodotti corretti in base al nome e alle caratteristiche
     def __filter_products(self, products_list, params) -> list:

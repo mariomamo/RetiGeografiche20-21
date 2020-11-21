@@ -7,6 +7,9 @@ price:
 price_deal:
     css: '#priceblock_dealprice'
     type: Text
+price_promo:
+    css: '#priceblock_pospromoprice'
+    type: Text
 short_description:
     css: '#featurebullets_feature_div'
     type: Text

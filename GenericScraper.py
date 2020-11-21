@@ -13,6 +13,19 @@ class GenericScraper:
     input_file = ''
     deelay_time = 10
 
+    user_agents = [
+        'Mozilla/5.0 (Linux; Android 8.0.0; SM-G960F Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.84 Mobile Safari/537.36',
+        'Mozilla/5.0 (Linux; Android 7.0; SM-G892A Build/NRD90M; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/60.0.3112.107 Mobile Safari/537.36',
+        'Mozilla/5.0 (Linux; Android 7.0; SM-G930VC Build/NRD90M; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/58.0.3029.83 Mobile Safari/537.36',
+        'Mozilla/5.0 (Linux; Android 6.0.1; SM-G935S Build/MMB29K; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/55.0.2883.91 Mobile Safari/537.36',
+        'Mozilla/5.0 (Linux; Android 6.0.1; SM-G920V Build/MMB29K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.98 Mobile Safari/537.36',
+        'Mozilla/5.0 (Linux; Android 5.1.1; SM-G928X Build/LMY47X) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.83 Mobile Safari/537.36',
+        'Mozilla/5.0 (Linux; Android 6.0.1; Nexus 6P Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.83 Mobile Safari/537.36',
+        'Mozilla/5.0 (Linux; Android 7.1.1; G8231 Build/41.2.A.0.219; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/59.0.3071.125 Mobile Safari/537.36',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36 Edg/86.0.622.69'
+    ]
+
     @abstractmethod
     def get_offers(self) -> dict: raise Exception("NotImplementedException")
 
@@ -51,23 +64,12 @@ class GenericScraper:
                 # print('REQUEST: ', request.text)
                 val = extractor.extract(request.text)
 
-                # Se c'è il prezzo
-                price = None
-                if val['price'] is not None and val['price'].__len__() > 0:
-                    price = val['price']
-                elif val['price_deal'] is not None and val['price_deal'].__len__() > 0:
-                    price = val['price_deal']
+                # Leggo il prezzo letto
+                price = self.getPrice(val)
 
                 # Rimuovo eventuali caratteri diversi dai numeri che possono esserci all'interno, compreso il simbolo €
                 price = self.fixPrice(price)
                 print("PRICE: ", price)
-
-                # NON DOVREBBE PIU' ESSERE NECESSARIO
-                # formatto la stringa per convertirla in float
-                # if '.' in price and ',' in price:
-                #     price = price.replace('.', '').replace(',', '.')
-                # else:
-                #     price = price.replace(',', '.')
 
                 try:
                     prodotto.prezzo = float(price)
@@ -81,6 +83,13 @@ class GenericScraper:
                 result.append(prodotto)
 
         return result
+
+    def getPrice(self, val: dict):
+        price = None
+        if val['price'] is not None and val['price'].__len__() > 0:
+            price = val['price']
+
+        return price
 
     def fixPrice(self, price: str):
         # return re.sub('[^0-9]', '', price)
@@ -106,23 +115,3 @@ class GenericScraper:
             # Altrimenti restituisce il primo e il secondo concatenati e aggiunge un punto tra la
             # concatenazione di questi due e il terzo
             return temp[0] + temp[1] + "." + temp[2]
-
-        # VECCHIO METODO
-        # if val['price'] is not None and val['price'].__len__() > 0:
-        #     price = val['price']
-        #     # Rimuovo il simbolo dell'euro
-        #     print("PRICE: " + price)
-        #     if price[price.__len__() - 1] == '€':
-        #         price = price[0: price.__len__() - 2]
-        #
-        #     print("PREZZO: ", price)
-        # elif val['price_deal'] is not None and val['price_deal'].__len__() > 0:
-        #     price = val['price_deal']
-        #     # Rimuovo il simbolo dell'euro
-        #     if price[price.__len__() - 1] == '€':
-        #         price = price[0: price.__len__() - 2]
-        #
-        #     print("PREZZO: ", price)
-        # else:
-        #     print("NULLONE")
-        #     price = '-1'

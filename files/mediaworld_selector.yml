@@ -7,4 +7,3 @@ price:
 price_deal:
     css: '.price-start'
     type: Text
-
