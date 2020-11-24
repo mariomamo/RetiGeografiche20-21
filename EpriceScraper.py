@@ -1,5 +1,5 @@
 from GenericScraper import GenericScraper
-from utility.FileReader import *
+from utility.FileUtility import *
 
 
 class EpriceScraper(GenericScraper):
