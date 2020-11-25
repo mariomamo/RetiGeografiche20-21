@@ -31,6 +31,7 @@ class MediaworldScraper(GenericScraper):
             'referer': 'https://www.mediaworld.it',
         }
 
+    '''Prendo i prezzi'''
     def get_offers(self) -> list:
         prodotti = readFromFile(self.input_file)
         print("Prodotti:", prodotti)
@@ -40,6 +41,7 @@ class MediaworldScraper(GenericScraper):
         # print(product_list)
         return product_list
 
+    '''Definisco i valori per i prezzi di MediaWorld'''
     def getPrice(self, val: dict):
         # Chiamo la superclasse
         price = super(MediaworldScraper, self).getPrice(val)
@@ -49,6 +51,7 @@ class MediaworldScraper(GenericScraper):
 
         return price
 
+    '''Se MediaWorld non risponde aspetto fino a 2 volte, prima 60 e poi 120 secondi e riprovo'''
     def waitRequest(self, numeroRichiesta: int):
         # Dopo 3 errori 404 aspetta un minuto e riprova
         # Aspetta fino a un minuto per massimo 3 volte
@@ -66,7 +69,11 @@ class MediaworldScraper(GenericScraper):
             self.__try_404 += 1
         # Se dopo __maximum_try_404 volte non si riesce, si fallisce
         else:
-            self.__try_404 = 0
+            self.__try_404 = 1
+
+    '''Azzero la variabile __try_404 se la richiesta è andata a buon fine'''
+    def requestOk(self):
+        self.__try_404 = 1
 
     def __change_user_agent(self):
         self.__current_agent += 1

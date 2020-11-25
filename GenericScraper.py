@@ -50,6 +50,8 @@ class GenericScraper:
                 request = self.makeRequest(prodotto.url)
 
             if request.status_code == 200:
+                # La richiesta è andata bene
+                self.requestOk()
                 # Crea l'estrattore per fare webscrape
                 extractor = Extractor.from_yaml_file(self.extractor_file)
 
@@ -98,6 +100,9 @@ class GenericScraper:
 
         return request
 
+    '''Viene chiamato quando la richiesta è andata a buon fine'''
+    def requestOk(self):
+        pass
 
     def fixPrice(self, price: str):
         # return re.sub('[^0-9]', '', price)
