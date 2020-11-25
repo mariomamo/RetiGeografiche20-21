@@ -54,6 +54,7 @@ class GestoreGrafici:
         Path(cartellaOutput).mkdir(parents=True, exist_ok=True)
         print(cartellaOutput + '/' + nomeProdotto)
 
+        pl.title(nomeProdotto)
         pl.plot(date, prezzi, "r-")
         pl.plot(date, prezzi, "ro")
         pl.ylabel('Prezzi')
