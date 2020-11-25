@@ -3,6 +3,7 @@ from telegram.ext import CommandHandler, MessageHandler, Filters, Updater, Callb
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from utility import FileUtility
 
+
 class HandlerFunction:
 
     def __init__(self, name: str, callback):

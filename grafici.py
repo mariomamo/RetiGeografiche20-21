@@ -36,8 +36,8 @@ class GestoreGrafici:
         prezzi = GestoreGrafici.__ottieniPrezzi(prodotti)
         date = GestoreGrafici.__ottieniData(prodotti)
 
-        print(prezzi)
-        print(date)
+        # print(prezzi)
+        # print(date)
 
         # for prodotto in prodotti:
         #     print(prodotto)
@@ -52,7 +52,7 @@ class GestoreGrafici:
 
         # Creo la cartella se non esiste
         Path(cartellaOutput).mkdir(parents=True, exist_ok=True)
-        print(cartellaOutput + '/' + nomeProdotto)
+        # print(cartellaOutput + '/' + nomeProdotto)
 
         pl.title(nomeProdotto)
         pl.plot(date, prezzi, "r-")
