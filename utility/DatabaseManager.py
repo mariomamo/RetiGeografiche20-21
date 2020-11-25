@@ -3,6 +3,7 @@ from AmazonScraper import AmazonScraper
 from EpriceScraper import EpriceScraper
 from MediaworldScraper import MediaworldScraper
 from datetime import datetime
+import GenericScraper
 
 
 class DatabaseManager:
@@ -33,4 +34,13 @@ class DatabaseManager:
             for prodotto in prodotti:
                 cursor.execute("INSERT INTO "+tablename+" (nome, url, prezzo, data) VALUES(%s, %s, %s, %s)", (prodotto.nome, prodotto.url, prodotto.prezzo, datetime.now()))
 
+    @staticmethod
+    def selectProduct(table: GenericScraper, nomeProdotto: str):
+        tablename = DatabaseManager.getTable(table)
+        query = "SELECT * FROM " + tablename + " WHERE nome LIKE '" + nomeProdotto + "%' ORDER BY id"
 
+        with DatabaseManager.__conn.cursor() as cursor:
+            cursor.execute(query)
+            rows = cursor.fetchall()
+
+        return rows

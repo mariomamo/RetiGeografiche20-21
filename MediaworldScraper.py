@@ -1,25 +1,28 @@
+import math
+import time
 from GenericScraper import GenericScraper
-from utility.FileReader import *
+from utility.FileUtility import *
 from random import randrange
+from utility.FileUtility import *
 
 
 class MediaworldScraper(GenericScraper):
     extractor_file = 'files/mediaworld_selector.yml'
     input_file = 'files/mediaworld_product_list.txt'
     deelay_time = 5
+    __maximum_404_try = 3
     maximum_request = 3
-
-    # TODO: mettere i path relativi
-    # __extractor_file = 'files/mediaworld_selector.yml'
-    # __input_file = 'files/mediaworld_product_list.txt'
-    # __deelay_time = 10
+    __current_agent = 0
+    __try_404 = 1
+    __404_sleep_time = 60
 
     def __init__(self):
         # TODO: controllare se sono tutti necessari
         self.headers = {
             'dnt': '1',
             'upgrade-insecure-requests': '1',
-            'user-agent': self.user_agents[randrange(self.user_agents.__len__())],
+            #'user-agent': self.user_agents[randrange(self.user_agents.__len__())],
+            'user-agent': self.user_agents[self.__current_agent],
             'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
             'sec-fetch-site': 'same-origin',
             'sec-fetch-mode': 'navigate',
@@ -32,6 +35,7 @@ class MediaworldScraper(GenericScraper):
         prodotti = readFromFile(self.input_file)
         print("Prodotti:", prodotti)
         product_list = self.scrape(prodotti)
+
         # print('[MEDIAWORLD SCRAPER] result:', type(product_list), 'content:', type(product_list[0]))
         # print(product_list)
         return product_list
@@ -44,6 +48,31 @@ class MediaworldScraper(GenericScraper):
             price = val['price_deal']
 
         return price
+
+    def waitRequest(self, numeroRichiesta: int):
+        # Dopo 3 errori 404 aspetta un minuto e riprova
+        # Aspetta fino a un minuto per massimo 3 volte
+        # 403/404 try parte da 1
+        print("MEDIAWORLD WAIT REQUEST: TENTATIVO ", numeroRichiesta, " - 404 ERROR: ", self.__try_404)
+        # se si possono fare ancora richieste
+        if numeroRichiesta < self.maximum_request:
+            time.sleep(self.deelay_time)
+        # Se si ottengono 3 risposte 403/404 consecutive si aspetta un pò e si riprova fino __maximum_404_try volte
+        elif numeroRichiesta == self.maximum_request and self.__try_404 < self.__maximum_404_try:
+            # Le richieste effettuate vengono azzerate, altrimenti il metodo di GenericScraper termina dopo 3 errori 403/404
+            self.richieste_effettuate = 0
+            print("MEDIAWORLD: ASPETTO {} SECONDI".format(self.__404_sleep_time * self.__try_404))
+            time.sleep(self.__404_sleep_time * self.__try_404)
+            self.__try_404 += 1
+        # Se dopo __maximum_try_404 volte non si riesce, si fallisce
+        else:
+            self.__try_404 = 0
+
+    def __change_user_agent(self):
+        self.__current_agent += 1
+        self.__current_agent = int(math.fmod(self.__current_agent, self.headers.__len__()))
+        print(self.headers['user-agent'], " - ", self.__current_agent, " - ", self.headers.__len__())
+        self.headers['user-agent'] = self.user_agents[self.__current_agent]
 
     # Filtra i prodotti corretti in base al nome e alle caratteristiche
     def __filter_products(self, products_list, params) -> list:

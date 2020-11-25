@@ -12,6 +12,7 @@ class GenericScraper:
     extractor_file = ''
     input_file = ''
     deelay_time = 10
+    richieste_effettuate = 0
 
     user_agents = [
         'Mozilla/5.0 (Linux; Android 8.0.0; SM-G960F Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.84 Mobile Safari/537.36',
@@ -37,24 +38,16 @@ class GenericScraper:
         for prodotto in prodotti:
             # Eseguo la richiesta per prelevare i dati
             # request contiene la risposta
-            try:
-                request = requests.get(prodotto.url, headers=self.headers)
-            except:
-                print("ERRORE RICHIESTA")
+            request = self.makeRequest(prodotto.url)
 
             print('status: ', request.status_code, " - ", prodotto.url)
 
             # Controllo errori
             # TODO: se l'errore è 500 la richiesta viene fatta dopo un pò
-            richieste = 0
-            while request.status_code != 200 and richieste < self.maximum_request:
-                richieste += 1
-                time.sleep(3)
-                try:
-                    request = requests.get(prodotto.url, headers=self.headers)
-                    print("TENTATIVO ", richieste)
-                except:
-                    print("ERRORE RICHIESTA")
+            while request.status_code != 200 and self.richieste_effettuate < self.maximum_request:
+                self.richieste_effettuate += 1
+                self.waitRequest(self.richieste_effettuate)
+                request = self.makeRequest(prodotto.url)
 
             if request.status_code == 200:
                 # Crea l'estrattore per fare webscrape
@@ -90,6 +83,19 @@ class GenericScraper:
             price = val['price']
 
         return price
+
+    def waitRequest(self, numeroRichiesta: int):
+        time.sleep(3)
+        if numeroRichiesta is not None:
+            print("TENTATIVO ", numeroRichiesta)
+
+    def makeRequest(self, url: str):
+        try:
+            request = requests.get(url, headers=self.headers)
+            return request
+        except:
+            print("ERRORE RICHIESTA")
+
 
     def fixPrice(self, price: str):
         # return re.sub('[^0-9]', '', price)

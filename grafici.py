@@ -7,6 +7,7 @@ from EpriceScraper import EpriceScraper
 from MediaworldScraper import MediaworldScraper
 import multiprocessing
 
+
 class GestoreGrafici:
 
     @staticmethod
