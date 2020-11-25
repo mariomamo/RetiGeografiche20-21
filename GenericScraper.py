@@ -90,11 +90,13 @@ class GenericScraper:
             print("TENTATIVO ", numeroRichiesta)
 
     def makeRequest(self, url: str):
-        try:
-            request = requests.get(url, headers=self.headers)
-            return request
-        except:
-            print("ERRORE RICHIESTA")
+        request = requests.get(url, headers=self.headers)
+        # try:
+        #     request = requests.get(url, headers=self.headers)
+        # except:
+        #     print("ERRORE RICHIESTA")
+
+        return request
 
 
     def fixPrice(self, price: str):
