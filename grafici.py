@@ -88,5 +88,4 @@ if __name__ == '__main__':
         process.start()
 
     wairForProcess(processes)
-    # GestoreGrafici.ottieniGrafico(MediaworldScraper, "PS4 PRO 1TB")
-    # GestoreGrafici.ottieniGrafico(MediaworldScraper, "PS5 1TB + Horizon Zero Dawn + Uncharted 4")
+    # GestoreGrafici.ottieniGrafico(AmazonScraper, "Kingdom Hearts III")

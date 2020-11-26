@@ -1,0 +1,5 @@
+backup db
+pg_dump -U {usernameDB} {nomdeDB} > {nomeOutput}.dump
+
+restore db
+pg_restore -U {usernameDB} -d {nomdeDB} {nomeInput}.dump
