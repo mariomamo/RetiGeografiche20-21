@@ -13,6 +13,7 @@ class MediaworldScraper(GenericScraper):
     __maximum_404_try = 3
     maximum_request = 3
     __current_agent = 0
+    # __try_404 deve partire da 1 altrimenti la prima volta aspetta 0 secondi
     __try_404 = 1
     __404_sleep_time = 60
 
