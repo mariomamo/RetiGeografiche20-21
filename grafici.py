@@ -88,4 +88,4 @@ if __name__ == '__main__':
         process.start()
 
     wairForProcess(processes)
-    # GestoreGrafici.ottieniGrafico(AmazonScraper, "Kingdom Hearts III")
+    #GestoreGrafici.ottieniGrafico(MediaworldScraper, "SAMSUNG Galaxy S20 5G Cosmic Gray")
