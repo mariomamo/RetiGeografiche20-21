@@ -1,0 +1,72 @@
+@staticmethod
+    def selectProduct(table: GenericScraper, nomeProdotto: str):
+        tablename = DatabaseManager.getTable(table)
+        # Se viene passato il nome del prodotto cerca solo quello
+        if nomeProdotto != '':
+            query = """
+                    SELECT id, nome, url, """ + tablename + """.prezzo, """ + tablename + """.data FROM
+                        (SELECT data, MIN(prezzo) as prezzo FROM """ + tablename + """ WHERE prezzo > -1 AND nome = '""" + nomeProdotto + """' GROUP BY data) AS R1
+                        INNER JOIN """ + tablename + """ ON """ + tablename + """.nome='""" + nomeProdotto + """'
+                        AND """ + tablename + """.data=R1.data
+                        AND """ + tablename + """.prezzo=R1.prezzo
+                    ORDER BY data
+            """
+        # Altrimenti cerca tutti i prodotti
+        else:
+            query = "SELECT * FROM " + tablename + " ORDER BY id"
+
+        with DatabaseManager.__conn.cursor() as cursor:
+            cursor.execute(query)
+            rows = cursor.fetchall()
+
+        currDate = None
+        giorno = 0
+        mese = 0
+        anno = 0
+
+        for i in range(rows.__len__()):
+            # Leggo tutta la riga
+            row = rows[i]
+            # Prendo solo la data dalla riga
+            data = row[row.__len__() - 1]
+            if currDate is None:
+                currDate = data
+
+            # Mi salvo il primo giorno disponibile per le misurazioni
+            giornoAttuale = int(str(data)[8:])
+            if giorno == 0:
+                giorno = giornoAttuale
+                mese = int(str(data)[5:6])
+                anno = int(str(data)[0:3])
+            # Se un giorno è stato saltato aggiungo un valore con -1
+            elif giornoAttuale - giorno > 1:
+                # print(giornoAttuale, " - ", giorno, " = ", giornoAttuale - giorno, " - Devo aggiungere qualcosa")
+
+                # Creo la tupla che conterrà il nuovo valore e inserisco tutti i valori uguali, tranne che per il prezzo
+                # il quale invece sarà -1, e la data che deve essere quella mancante
+                oggetto = tuple()
+                for j in range(row.__len__() - 2):
+                    #oggetto.append(row[i])
+                    oggetto += (row[j],)
+
+                # Inserisco il prezzo pari a -1
+                oggetto += (-1,)
+                # Inserisco la data mancante
+                d = datetime.date(anno, mese, giorno + 1)
+                oggetto += (d,)
+
+                # Inserisco l'elemento nella lista
+                rows.insert(i, oggetto)
+                # print(i, " Aggiunto ", oggetto)
+                # Aumento il giorno a cui sono arrivato
+                giorno += 1
+                # Decremento il valore del ciclo per valutare l'elemento appena inserito
+                i -= 1
+            else:
+                # Incremento il valore del giorno che mi aspetto di valutare
+                giorno += 1
+
+        # for row in rows:
+        #     print(row)
+
+        return rows
