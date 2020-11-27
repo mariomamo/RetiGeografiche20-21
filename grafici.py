@@ -29,10 +29,10 @@ class GestoreGrafici:
         return date
 
     @staticmethod
-    def ottieniGrafico(scraper: GenericScraper, nomeProdotto: str) -> None:
+    def ottieniGrafico(scraper: GenericScraper, nomeProdotto: str, dataInizio=None, dataFine=None) -> None:
         nomeProdotto = nomeProdotto.replace("'", "''")
 
-        prodotti = DatabaseManager.selectProduct(scraper, nomeProdotto)
+        prodotti = DatabaseManager.selectProduct(scraper, nomeProdotto, dataInizio=dataInizio, dataFine=dataFine)
         prezzi = GestoreGrafici.__ottieniPrezzi(prodotti)
         date = GestoreGrafici.__ottieniData(prodotti)
 
@@ -54,14 +54,31 @@ class GestoreGrafici:
         Path(cartellaOutput).mkdir(parents=True, exist_ok=True)
         # print(cartellaOutput + '/' + nomeProdotto)
 
+        GestoreGrafici.costruisciGrafico(nomeProdotto, date, prezzi, cartellaOutput, discontinuo=True)
+
+    @staticmethod
+    def costruisciGrafico(nomeProdotto: str, date: list, prezzi: list, cartellaOutput: str, discontinuo=False):
+        if discontinuo:
+            prezzi = GestoreGrafici.rimuoviValoriInutili(prezzi)
+
         pl.title(nomeProdotto)
         pl.plot(date, prezzi, "r-")
         pl.plot(date, prezzi, "ro")
         pl.ylabel('Prezzi')
         pl.xlabel('Giorni')
+        pl.grid()
         pl.savefig(cartellaOutput + '/' + nomeProdotto + ".png")
-        #pl.show()
+        # pl.show()
         pl.close()
+
+    '''Rimuove i valori pari a -1'''
+    @staticmethod
+    def rimuoviValoriInutili(prezzi: list) -> list:
+        for i in range(prezzi.__len__()):
+            if prezzi[i] == -1:
+                prezzi[i] = None
+
+        return prezzi
 
 
 def worker(scraper: GenericScraper) -> None:
@@ -80,7 +97,7 @@ def wairForProcess(processes: list) -> None:
 
 if __name__ == '__main__':
     scraper = [AmazonScraper, EpriceScraper, MediaworldScraper]
-    #scraper = [MediaworldScraper]
+    # scraper = [MediaworldScraper]
     processes = []
     for i in range(scraper.__len__()):
         process = multiprocessing.Process(target=worker, args=(scraper[i],))
@@ -88,4 +105,4 @@ if __name__ == '__main__':
         process.start()
 
     wairForProcess(processes)
-    #GestoreGrafici.ottieniGrafico(MediaworldScraper, "SAMSUNG Galaxy S20 5G Cosmic Gray")
+    # GestoreGrafici.ottieniGrafico(AmazonScraper, "Kingdom Hearts III")

@@ -9,6 +9,8 @@ def readFromFile(filepath: str):
     with open(filepath, 'r') as file:
         lines = file.readlines()
         for line in lines:
+            # Rimuovo lo '\n' alla fine di ogni riga
+            line = line.strip("\n")
             params = line.split(SEPARATOR)
             lista_prodotti.append(Prodotto(nome=params[1][0: params[1].__len__()], url=params[0]))
 
