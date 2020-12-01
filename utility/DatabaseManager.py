@@ -131,7 +131,7 @@ class DatabaseManager:
         Retituisce il range di date degli ultimi 30 giorni
     '''
     @staticmethod
-    def __arco30Giorni():
+    def arco30Giorni():
         dataFine = datetime.date.today()
         dataInizio = dataFine - datetime.timedelta(31)
         return str(dataInizio), str(dataFine)

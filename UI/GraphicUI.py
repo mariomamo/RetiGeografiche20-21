@@ -1,5 +1,87 @@
 import PySimpleGUI as sg
 import os.path
+from AmazonScraper import AmazonScraper
+from EpriceScraper import EpriceScraper
+from MediaworldScraper import MediaworldScraper
+from utility.DatabaseManager import DatabaseManager
+
+def generateGraph():
+    data_inizio, data_fine = DatabaseManager.arco30Giorni()
+    checked_scraper = [AmazonScraper, EpriceScraper, MediaworldScraper]
+
+    option_rows = [
+        [
+            sg.Text("Seleziona l'e-commerce", size=(20, 0)),
+            sg.Checkbox("Amazon", default=True, enable_events=True, key='ecommamazon'),
+            sg.Checkbox("Eprice", default=True, enable_events=True, key='ecommeprice'),
+            sg.Checkbox("Mediaworld", default=True, enable_events=True, key='ecommmediaworld'),
+        ],
+        [
+            sg.Text("Range di date", size=(20, 0)),
+            sg.Button("Tutti", key="datetutti"),
+            sg.Button("Mese corrente", key="datemese"),
+            sg.Button("Ultimi 31 giorni", key="date31day"),
+
+        ],
+        [
+            sg.Text("Data inizio:", size=(20, 0)),
+            sg.CalendarButton('Choose Date', target=(2, 2), key='startDate', format='%Y-%m-%d'),
+            sg.Text(data_inizio, size=(20, 0)),
+
+        ],
+        [
+            sg.Text("Data Fine:", size=(20, 0)),
+            sg.CalendarButton('Choose Date', target=(3, 2), key='endDate', format='%Y-%m-%d'),
+            sg.Text(data_fine, size=(20, 0)),
+
+        ],
+        [
+            sg.Text("Misurazioni multiple", size=(20, 0)),
+            sg.Radio("Tutti", "misurazioni", default=True, enable_events=True, key='mistutti'),
+            sg.Radio("Minore", "misurazioni", enable_events=True, key='mismin'),
+
+        ],
+
+        [
+            sg.Text("Date mancanti", size=(20, 0)),
+            sg.Radio("Si", "datemancanti", default=True, enable_events=True, key='missyes'),
+            sg.Radio("No", "datemancanti", enable_events=True, key='missno'),
+        ],
+        [
+            sg.Button("Genera"),
+            sg.Button("Indietro"),
+        ]
+    ]
+    
+    window = sg.Window("Generatore grafici", option_rows)
+
+    while True:
+        event, values = window.read()
+        print(event)
+
+        if event == "Indietro":
+            window.close()
+            start()
+            break
+        elif event == sg.WIN_CLOSED:
+            window.close()
+            break
+        elif event == "ecommamazon":
+            if AmazonScraper in checked_scraper:
+                checked_scraper.remove(AmazonScraper)
+            else:
+                checked_scraper.append(AmazonScraper)
+        elif event == "ecommeprice":
+            if EpriceScraper in checked_scraper:
+                checked_scraper.remove(EpriceScraper)
+            else:
+                checked_scraper.append(EpriceScraper)
+        elif event == "ecommmediaworld":
+            if MediaworldScraper in checked_scraper:
+                checked_scraper.remove(MediaworldScraper)
+            else:
+                checked_scraper.append(MediaworldScraper)
+
 
 
 def getImagesFromFolder(type: str):
@@ -63,7 +145,7 @@ def showgraph():
         ],
     ]
 
-    window = sg.Window("Image Viewer", layout)
+    window = sg.Window("Visualizzazione grafici", layout)
 
     # Run the Event Loop
     while True:
@@ -103,7 +185,7 @@ def showgraph():
 
 
 def start():
-    layout = [[sg.Text("Progetto  Reti geografiche 2020-21")], [sg.Button("Vedi i grafici")], [sg.Button("Chiudi")]]
+    layout = [[sg.Text("Progetto  Reti geografiche 2020-21")], [sg.Button("Vedi i grafici")], [sg.Button("Genera i grafici")], [sg.Button("Chiudi")]]
 
     # Create the window
     window = sg.Window("Progetto Reti geografiche", layout)
@@ -119,6 +201,10 @@ def start():
         elif event == "Vedi i grafici":
             window.close()
             showgraph()
+            break
+        elif event == "Genera i grafici":
+            window.close()
+            generateGraph()
             break
 
 
