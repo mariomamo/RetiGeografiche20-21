@@ -8,11 +8,11 @@ from utility.FileUtility import *
 
 
 class MediaworldScraper(GenericScraper):
-    # extractor_file = 'files/mediaworld_selector.yml'
-    # input_file = 'files/mediaworld_product_list.txt'
+    extractor_file = 'files/mediaworld_selector.yml'
+    input_file = 'files/mediaworld_product_list.txt'
 
-    extractor_file = 'C:/Users/Mario/Desktop/Mario/Progetti/RetiGeografiche20-21/files/mediaworld_selector.yml'
-    input_file = 'C:/Users/Mario/Desktop/Mario/Progetti/RetiGeografiche20-21/files/mediaworld_product_list.txt'
+    # extractor_file = 'C:/Users/Mario/Desktop/Mario/Progetti/RetiGeografiche20-21/files/mediaworld_selector.yml'
+    # input_file = 'C:/Users/Mario/Desktop/Mario/Progetti/RetiGeografiche20-21/files/mediaworld_product_list.txt'
     deelay_time = 5
     __maximum_404_try = 3
     maximum_request = 3

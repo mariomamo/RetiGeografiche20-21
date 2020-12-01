@@ -5,11 +5,11 @@ from random import randrange
 
 class AmazonScraper(GenericScraper):
     # TODO: mettere i path relativi
-    # extractor_file = 'files/amazon_selector.yml'
-    # input_file = 'files/amazon_product_list.txt'
+    extractor_file = 'files/amazon_selector.yml'
+    input_file = 'files/amazon_product_list.txt'
 
-    extractor_file = 'C:/Users/Mario/Desktop/Mario/Progetti/RetiGeografiche20-21/files/amazon_selector.yml'
-    input_file = 'C:/Users/Mario/Desktop/Mario/Progetti/RetiGeografiche20-21/files/amazon_product_list.txt'
+    # extractor_file = 'C:/Users/Mario/Desktop/Mario/Progetti/RetiGeografiche20-21/files/amazon_selector.yml'
+    # input_file = 'C:/Users/Mario/Desktop/Mario/Progetti/RetiGeografiche20-21/files/amazon_product_list.txt'
     deelay_time = 10
 
     def __init__(self):

@@ -37,15 +37,12 @@ class DatabaseManager:
     @staticmethod
     def selectProduct(table: GenericScraper, nomeProdotto: str, dataInizio=None, dataFine=None, multiplePriceForDay=False):
         # Inizializzo le date se non ci sono
-        oggi = str(datetime.date.today())
-        if dataInizio is None:
-            anno = oggi[0:4]
-            mese = oggi[5:7]
-            dataInizio = anno + '-' + mese + '-01'
-        if dataFine is None:
-            anno = oggi[0:4]
-            mese = oggi[5:7]
-            dataFine = anno + '-' + mese + '-' + str(monthrange(int(anno), int(mese))[1])
+        if dataInizio is None and dataFine is None:
+            dataInizio, dataFine = DatabaseManager.__arco30Giorni()
+        elif dataInizio is None:
+            dataInizio, _ = DatabaseManager.__arco30Giorni()
+        elif dataFine is None:
+            _, dataFine = DatabaseManager.__arco30Giorni()
 
         # print(dataInizio)
         # print(dataFine)
@@ -117,6 +114,29 @@ class DatabaseManager:
 
         return rows
 
+    '''
+        Restituisce il range di tate del mese corrente
+    '''
+    @staticmethod
+    def __tuttoIlMese():
+        oggi = str(datetime.date.today())
+        anno = oggi[0:4]
+        mese = oggi[5:7]
+        dataInizio = anno + '-' + mese + '-01'
+        dataFine = anno + '-' + mese + '-' + str(monthrange(int(anno), int(mese))[1])
+
+        return dataInizio, dataFine
+
+    '''
+        Retituisce il range di date degli ultimi 30 giorni
+    '''
+    @staticmethod
+    def __arco30Giorni():
+        dataFine = datetime.date.today()
+        dataInizio = dataFine - datetime.timedelta(31)
+        return str(dataInizio), str(dataFine)
+
+    @staticmethod
     def __getQueryForSelectProduct(tablename: str, nomeProdotto: str, dataInizio: str, dataFine: str, multiplePriceForDay=None):
         # Se si vogliono più prezzi per lo stesso giorno
         if multiplePriceForDay:

@@ -4,11 +4,11 @@ from utility.FileUtility import *
 
 class EpriceScraper(GenericScraper):
     # TODO: mettere i path relativi
-    # extractor_file = 'files/eprice_selector.yml'
-    # input_file = 'files/eprice_product_list.txt'
+    extractor_file = 'files/eprice_selector.yml'
+    input_file = 'files/eprice_product_list.txt'
 
-    extractor_file = 'C:/Users/Mario/Desktop/Mario/Progetti/RetiGeografiche20-21/files/eprice_selector.yml'
-    input_file = 'C:/Users/Mario/Desktop/Mario/Progetti/RetiGeografiche20-21/files/eprice_product_list.txt'
+    # extractor_file = 'C:/Users/Mario/Desktop/Mario/Progetti/RetiGeografiche20-21/files/eprice_selector.yml'
+    # input_file = 'C:/Users/Mario/Desktop/Mario/Progetti/RetiGeografiche20-21/files/eprice_product_list.txt'
     # Incredibile, e-price si fa floodare
     deelay_time = 0
 
