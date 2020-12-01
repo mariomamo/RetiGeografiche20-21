@@ -13,6 +13,7 @@ class GenericScraper:
     input_file = ''
     deelay_time = 10
     richieste_effettuate = 0
+    request = None
 
     user_agents = [
         'Mozilla/5.0 (Linux; Android 8.0.0; SM-G960F Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.84 Mobile Safari/537.36',
@@ -38,44 +39,61 @@ class GenericScraper:
         for prodotto in prodotti:
             # Eseguo la richiesta per prelevare i dati
             # request contiene la risposta
-            request = self.makeRequest(prodotto.url)
+            self.request = self.makeRequest(prodotto.url)
 
-            print('status: ', request.status_code, " - ", prodotto.url)
+            # Se viene eseguito qualche redirect strano chiama la funzione onRedirect
+            if prodotto.url != self.request.url:
+                # Se onRedirect restituisce True si continua la richiesta
+                if self.onRedirect():
+                    result = self.continuaRichiesta(prodotto, i, prodotti, result)
+                else:
+                    # Altrimenti si imposta come valore del prodotto -1 e si continua con un nuovo prodotto
+                    prodotto.prezzo = -1
+                    result.append(prodotto)
+                    print("[REDIRECT ERROR]: ", prodotto.nome, ", ", prodotto.url, ", ", prodotto.prezzo, sep='')
+            else:
+                result = self.continuaRichiesta(prodotto, i, prodotti, result)
 
-            # Controllo errori
-            # TODO: se l'errore è 500 la richiesta viene fatta dopo un pò
-            while request.status_code != 200 and self.richieste_effettuate < self.maximum_request:
-                self.richieste_effettuate += 1
-                self.waitRequest(self.richieste_effettuate)
-                request = self.makeRequest(prodotto.url)
 
-            if request.status_code == 200:
-                # La richiesta è andata bene
-                self.requestOk()
-                # Crea l'estrattore per fare webscrape
-                extractor = Extractor.from_yaml_file(self.extractor_file)
+        return result
 
-                # val rappresenta i prodotti letti dalla pagina (per i prodotti multipli è un dizionario)
-                # print('REQUEST: ', request.text)
-                val = extractor.extract(request.text)
+    def continuaRichiesta(self, prodotto, i, prodotti, result):
+        print('status: ', self.request.status_code, " - ", prodotto.url)
 
-                # Leggo il prezzo letto
-                price = self.getPrice(val)
+        # Controllo errori
+        # TODO: se l'errore è 500 la richiesta viene fatta dopo un pò
+        while self.request.status_code != 200 and self.richieste_effettuate < self.maximum_request:
+            self.richieste_effettuate += 1
+            self.waitRequest(self.richieste_effettuate)
+            self.request = self.makeRequest(prodotto.url)
 
-                # Rimuovo eventuali caratteri diversi dai numeri che possono esserci all'interno, compreso il simbolo €
-                price = self.fixPrice(price)
-                print("PRICE: ", price)
+        if self.request.status_code == 200:
+            # La richiesta è andata bene
+            self.requestOk()
+            # Crea l'estrattore per fare webscrape
+            extractor = Extractor.from_yaml_file(self.extractor_file)
 
-                try:
-                    prodotto.prezzo = float(price)
-                except:
-                    print("Eccezzzion MANNAAAAGG")
+            # val rappresenta i prodotti letti dalla pagina (per i prodotti multipli è un dizionario)
+            # print('REQUEST: ', request.text)
+            val = extractor.extract(self.request.text)
 
-                # Qui dovrei avvisare il main e passargli i valori
-                if i < prodotti.__len__() - 1: time.sleep(self.deelay_time)
-                i += 1
+            # Leggo il prezzo letto
+            price = self.getPrice(val)
 
-                result.append(prodotto)
+            # Rimuovo eventuali caratteri diversi dai numeri che possono esserci all'interno, compreso il simbolo €
+            price = self.fixPrice(price)
+            print("PRICE: ", price)
+
+            try:
+                prodotto.prezzo = float(price)
+            except:
+                print("Eccezzzion MANNAAAAGG")
+
+            # Qui dovrei avvisare il main e passargli i valori
+            if i < prodotti.__len__() - 1: time.sleep(self.deelay_time)
+            i += 1
+
+            result.append(prodotto)
 
         return result
 
@@ -99,6 +117,9 @@ class GenericScraper:
         #     print("ERRORE RICHIESTA")
 
         return request
+
+    def onRedirect(self):
+        return True
 
     '''Viene chiamato quando la richiesta è andata a buon fine'''
     def requestOk(self):

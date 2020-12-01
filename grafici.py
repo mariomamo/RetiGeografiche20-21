@@ -23,16 +23,16 @@ class GestoreGrafici:
         date = list()
         for prodotto in prodotti:
             data = prodotto[prodotto.__len__() - 1]
-            data = data.strftime('%m/%d')
+            data = data.strftime('%d/%m')
             date.append(data)
 
         return date
 
     @staticmethod
-    def ottieniGrafico(scraper: GenericScraper, nomeProdotto: str, dataInizio=None, dataFine=None) -> None:
+    def ottieniGrafico(scraper: GenericScraper, nomeProdotto: str, dataInizio=None, dataFine=None, multiplePriceForDay=False) -> None:
         nomeProdotto = nomeProdotto.replace("'", "''")
 
-        prodotti = DatabaseManager.selectProduct(scraper, nomeProdotto, dataInizio=dataInizio, dataFine=dataFine)
+        prodotti = DatabaseManager.selectProduct(scraper, nomeProdotto, dataInizio=dataInizio, dataFine=dataFine, multiplePriceForDay=multiplePriceForDay)
         prezzi = GestoreGrafici.__ottieniPrezzi(prodotti)
         date = GestoreGrafici.__ottieniData(prodotti)
 
@@ -47,6 +47,7 @@ class GestoreGrafici:
         nomeProdotto = nomeProdotto.replace("\"", "pollici")
         nomeProdotto = nomeProdotto.replace("''", "'")
         nomeProdotto = nomeProdotto.replace(":", " ")
+        nomeProdotto = nomeProdotto.replace("/", "-")
         #nomeProdotto = nomeProdotto.replace("+", "")
         #nomeProdotto = nomeProdotto.replace(".", r".")
 
@@ -67,6 +68,7 @@ class GestoreGrafici:
         pl.ylabel('Prezzi')
         pl.xlabel('Giorni')
         pl.grid()
+        # pl.xticks(rotation=75)
         pl.savefig(cartellaOutput + '/' + nomeProdotto + ".png")
         # pl.show()
         pl.close()
@@ -87,7 +89,7 @@ def worker(scraper: GenericScraper) -> None:
         # nomeProdotto = prodotto[1][0:prodotto[1].__len__() - 1]
         nomeProdotto = prodotto[1].strip("\n")
         print(nomeProdotto)
-        GestoreGrafici.ottieniGrafico(scraper, nomeProdotto)
+        GestoreGrafici.ottieniGrafico(scraper, nomeProdotto, multiplePriceForDay=False)
 
 
 def wairForProcess(processes: list) -> None:
@@ -98,6 +100,7 @@ def wairForProcess(processes: list) -> None:
 if __name__ == '__main__':
     scraper = [AmazonScraper, EpriceScraper, MediaworldScraper]
     # scraper = [MediaworldScraper]
+
     processes = []
     for i in range(scraper.__len__()):
         process = multiprocessing.Process(target=worker, args=(scraper[i],))
@@ -105,4 +108,4 @@ if __name__ == '__main__':
         process.start()
 
     wairForProcess(processes)
-    # GestoreGrafici.ottieniGrafico(AmazonScraper, "Kingdom Hearts III")
+    # GestoreGrafici.ottieniGrafico(AmazonScraper, "Samsung Galaxy S20+ 5g Tim Cosmic Gray 8gb/128gb Dual Sim", multiplePriceForDay=False)

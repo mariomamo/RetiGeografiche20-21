@@ -2,10 +2,14 @@ from GenericScraper import GenericScraper
 from utility.FileUtility import *
 from random import randrange
 
+
 class AmazonScraper(GenericScraper):
     # TODO: mettere i path relativi
-    extractor_file = 'files/amazon_selector.yml'
-    input_file = 'files/amazon_product_list.txt'
+    # extractor_file = 'files/amazon_selector.yml'
+    # input_file = 'files/amazon_product_list.txt'
+
+    extractor_file = 'C:/Users/Mario/Desktop/Mario/Progetti/RetiGeografiche20-21/files/amazon_selector.yml'
+    input_file = 'C:/Users/Mario/Desktop/Mario/Progetti/RetiGeografiche20-21/files/amazon_product_list.txt'
     deelay_time = 10
 
     def __init__(self):
@@ -28,7 +32,7 @@ class AmazonScraper(GenericScraper):
 
     def get_offers(self) -> list:
         prodotti = readFromFile(self.input_file)
-        print("Prodotti:", prodotti)
+        # print("Prodotti:", prodotti)
         product_list = self.scrape(prodotti)
         # print('[AMAZON SCRAPER] result:', type(product_list), 'content:', type(product_list[0]))
         # print(product_list)

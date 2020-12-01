@@ -1,7 +1,6 @@
 import psycopg2
 from AmazonScraper import AmazonScraper
 from EpriceScraper import EpriceScraper
-from MediaworldScraper import MediaworldScraper
 import datetime
 import GenericScraper
 from calendar import monthrange
@@ -33,10 +32,11 @@ class DatabaseManager:
 
         with DatabaseManager.__conn.cursor() as cursor:
             for prodotto in prodotti:
-                cursor.execute("INSERT INTO " + tablename + " (nome, url, prezzo, data) VALUES(%s, %s, %s, %s)", (prodotto.nome, prodotto.url, prodotto.prezzo, datetime.now()))
+                cursor.execute("INSERT INTO " + tablename + " (nome, url, prezzo, data) VALUES(%s, %s, %s, %s)", (prodotto.nome, prodotto.url, prodotto.prezzo, datetime.datetime.now()))
 
     @staticmethod
-    def selectProduct(table: GenericScraper, nomeProdotto: str, dataInizio=None, dataFine=None):
+    def selectProduct(table: GenericScraper, nomeProdotto: str, dataInizio=None, dataFine=None, multiplePriceForDay=False):
+        # Inizializzo le date se non ci sono
         oggi = str(datetime.date.today())
         if dataInizio is None:
             anno = oggi[0:4]
@@ -52,20 +52,8 @@ class DatabaseManager:
 
         tablename = DatabaseManager.getTable(table)
         result = list()
-        # Se viene passato il nome del prodotto cerca solo quello
-        if nomeProdotto != '':
-            query = """
-                    SELECT id, nome, url, """ + tablename + """.prezzo, """ + tablename + """.data FROM
-                        (SELECT data, MIN(prezzo) as prezzo FROM """ + tablename + """ WHERE prezzo > -1 AND nome = '""" + nomeProdotto + """' GROUP BY data) AS R1
-                        INNER JOIN """ + tablename + """ ON """ + tablename + """.nome='""" + nomeProdotto + """'
-                        AND """ + tablename + """.data=R1.data
-                        AND """ + tablename + """.prezzo=R1.prezzo
-                        AND """ + tablename + """.data BETWEEN '""" + dataInizio + """' AND '""" + dataFine + """'
-                    ORDER BY data
-            """
-        # Altrimenti cerca tutti i prodotti
-        else:
-            query = "SELECT * FROM " + tablename + " ORDER BY id"
+
+        query = DatabaseManager.__getQueryForSelectProduct(tablename, nomeProdotto, dataInizio, dataFine, multiplePriceForDay=multiplePriceForDay)
 
         with DatabaseManager.__conn.cursor() as cursor:
             cursor.execute(query)
@@ -128,6 +116,27 @@ class DatabaseManager:
         #     print(row)
 
         return rows
+
+    def __getQueryForSelectProduct(tablename: str, nomeProdotto: str, dataInizio: str, dataFine: str, multiplePriceForDay=None):
+        # Se si vogliono più prezzi per lo stesso giorno
+        if multiplePriceForDay:
+            query = """SELECT * FROM """ + tablename + """ WHERE nome='""" + nomeProdotto + """' ORDER BY id"""
+        # Se viene passato il nome del prodotto cerca solo quello
+        elif nomeProdotto != '':
+            query = """
+                    SELECT id, nome, url, """ + tablename + """.prezzo, """ + tablename + """.data FROM
+                        (SELECT data, MIN(prezzo) as prezzo FROM """ + tablename + """ WHERE prezzo > -1 AND nome = '""" + nomeProdotto + """' GROUP BY data) AS R1
+                        INNER JOIN """ + tablename + """ ON """ + tablename + """.nome='""" + nomeProdotto + """'
+                        AND """ + tablename + """.data=R1.data
+                        AND """ + tablename + """.prezzo=R1.prezzo
+                        AND """ + tablename + """.data BETWEEN '""" + dataInizio + """' AND '""" + dataFine + """'
+                    ORDER BY data
+            """
+        # Altrimenti cerca tutti i prodotti
+        else:
+            query = "SELECT * FROM " + tablename + " ORDER BY id"
+
+        return query
 
     '''
     SELECT id, nome, url, prodottimediaworld.prezzo, prodottimediaworld.data FROM

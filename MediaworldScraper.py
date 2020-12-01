@@ -1,14 +1,18 @@
 import math
 import time
 from GenericScraper import GenericScraper
+import requests
 from utility.FileUtility import *
 from random import randrange
 from utility.FileUtility import *
 
 
 class MediaworldScraper(GenericScraper):
-    extractor_file = 'files/mediaworld_selector.yml'
-    input_file = 'files/mediaworld_product_list.txt'
+    # extractor_file = 'files/mediaworld_selector.yml'
+    # input_file = 'files/mediaworld_product_list.txt'
+
+    extractor_file = 'C:/Users/Mario/Desktop/Mario/Progetti/RetiGeografiche20-21/files/mediaworld_selector.yml'
+    input_file = 'C:/Users/Mario/Desktop/Mario/Progetti/RetiGeografiche20-21/files/mediaworld_product_list.txt'
     deelay_time = 5
     __maximum_404_try = 3
     maximum_request = 3
@@ -30,12 +34,13 @@ class MediaworldScraper(GenericScraper):
             'sec-fetch-user': '?1',
             'sec-fetch-dest': 'document',
             'referer': 'https://www.mediaworld.it',
+
         }
 
     '''Prendo i prezzi'''
     def get_offers(self) -> list:
         prodotti = readFromFile(self.input_file)
-        print("Prodotti:", prodotti)
+        # print("Prodotti:", prodotti)
         product_list = self.scrape(prodotti)
 
         # print('[MEDIAWORLD SCRAPER] result:', type(product_list), 'content:', type(product_list[0]))
@@ -51,6 +56,11 @@ class MediaworldScraper(GenericScraper):
             price = val['price_deal']
 
         return price
+
+    '''Restituendo False la richiesta non continua e viene assegnato come valore al prodotto -1'''
+    def onRedirect(self):
+        print('è stato eseguito un redirect, mi fermo')
+        return False
 
     '''Se MediaWorld non risponde aspetto fino a 2 volte, prima 60 e poi 120 secondi e riprovo'''
     def waitRequest(self, numeroRichiesta: int):

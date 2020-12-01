@@ -1,0 +1,7 @@
+SELECT id, nome, url, prodottimediaworld.prezzo, prodottimediaworld.data FROM
+(SELECT data, MIN(prezzo) as prezzo FROM prodottimediaworld WHERE prezzo > -1 AND nome = 'SAMSUNG Galaxy S20 5G Cosmic Gray' GROUP BY data) AS R1
+INNER JOIN prodottimediaworld ON prodottimediaworld.nome='SAMSUNG Galaxy S20 5G Cosmic Gray'
+	AND prodottimediaworld.data=R1.data
+    AND prodottimediaworld.prezzo=R1.prezzo
+    AND prodottimediaworld.data BETWEEN '2020-11-01' AND '2020-11-30'
+ORDER BY data

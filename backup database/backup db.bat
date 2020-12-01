@@ -1,0 +1,1 @@
+pg_dump -U root -Fc ProdottiEcommerce > ProdottiEcommerce.dump

@@ -1,0 +1,1 @@
+pg_restore -U root -d ProdottiEcommerce ProdottiEcommerce.dump
