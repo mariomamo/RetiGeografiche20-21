@@ -1,3 +1,5 @@
+import threading
+import time
 from pathlib import Path
 import matplotlib.pylab as pl
 from utility.DatabaseManager import DatabaseManager
@@ -6,11 +8,43 @@ from AmazonScraper import AmazonScraper
 from EpriceScraper import EpriceScraper
 from MediaworldScraper import MediaworldScraper
 import multiprocessing
-from utility.Listener import Listener
-from utility.Ascoltatore import  Ascoltatore
+from utility.Ascoltatore import Ascoltatore
+from utility.Ascoltabile import Ascoltabile
+from threading import Thread
 
 
-class MyListener(Listener):
+# class GraphicGeneratorAscoltatore(Ascoltatore):
+#     # __threadlock serve per gestire il lock e non far accavallare le print
+#     __threadLock = threading.Lock()
+#     __prodotti = dict()
+#     __alreadyPrintedTot = False
+#
+#     def update(self, operation, *args):
+#         # Lo stampo solo se è una stringa
+#         if operation == "prezzi":
+#             try:
+#                 scraper = args[0][0]
+#                 messaggio = args[0][1]
+#                 if isinstance(messaggio, str):
+#                     self.__threadLock.acquire()
+#                     print(scraper, " ---> ", messaggio)
+#                     self.__threadLock.release()
+#             except Exception as ex:
+#                 print("[ECCEZIONE]: ", ex)
+#         elif operation == "totprodotti":
+#             scraper = args[0][0]
+#             numero_prodotti = args[0][1]
+#             self.aggiungiProdotto(scraper, numero_prodotti)
+#
+#             if self.__prodotti.__len__() == 3:
+#                 self.__threadLock.acquire()
+#                 if not self.__alreadyPrintedTot:
+#                     print(f"Prodotti totali: {self.getTotaleProdotti()}")
+#                     self.__alreadyPrintedTot = True
+#                 self.__threadLock.release()
+
+class GraphicGeneratorAscoltatore(Ascoltatore):
+    __prodotti = dict()
 
     def update(self, operation, *args):
         # Lo stampo solo se è una stringa
@@ -23,9 +57,12 @@ class MyListener(Listener):
             except Exception as ex:
                 print("[ECCEZIONE]: ", ex)
         elif operation == "totprodotti":
-            print(f"Scraper:  {args[0][0]}, totale prodotti: {args[0][1]}")
+            scraper = args[0][0]
+            numero_prodotti = args[0][1]
+            print(f">>> {scraper} = {numero_prodotti} prodotti")
 
-class GestoreGrafici(Ascoltatore):
+
+class GestoreGrafici(Ascoltabile):
 
     def __init__(self):
         self.__listeners = []
@@ -53,7 +90,11 @@ class GestoreGrafici(Ascoltatore):
 
     def ottieniGrafici(self, scraper: GenericScraper, dataInizio=None, dataFine=None, multiplePriceForDay=False, discontinuo=True):
         tuttiIProdotti = DatabaseManager.selectProduct(scraper, "")
-        self.notify("totprodotti", DatabaseManager.getTable(scraper), tuttiIProdotti.__len__())
+
+        #TODO: Utilizzarlo fuori, è meglio
+        # numeroProdotti = DatabaseManager.getProductCount(scraper)
+        # self.notify("totprodotti", DatabaseManager.getTable(scraper), numeroProdotti)
+
         for prodotto in tuttiIProdotti:
             # nomeProdotto = prodotto[1][0:prodotto[1].__len__() - 1]
             nomeProdotto = prodotto[1].strip("\n")
@@ -119,11 +160,11 @@ class GestoreGrafici(Ascoltatore):
 
         return prezzi
 
-    def addListeners(self, listeners: list = Listener):
+    def addListeners(self, listeners: list = Ascoltatore):
         self.__listeners.extend(listeners)
         print(self.__listeners)
 
-    def removeListener(self, listener: Listener):
+    def removeListener(self, listener: Ascoltatore):
         self.__listeners.remove(listener)
 
     def notify(self, operation, *args):
@@ -146,18 +187,40 @@ def wairForProcess(processes: list) -> None:
         processo.join()
 
 
+class GraphicGeneratorThread (Thread):
+
+    def __init__(self, gestore: GestoreGrafici, scraper: GenericScraper):
+        Thread.__init__(self)
+        self.__gestore = gestore
+        self.__scraper = scraper
+
+    def run(self):
+        self.__gestore.ottieniGrafici(self.__scraper)
+
+
 if __name__ == '__main__':
     gestore = GestoreGrafici()
-    gestore.addListeners([MyListener()])
+    gestore.addListeners([GraphicGeneratorAscoltatore()])
     scraper = [AmazonScraper, EpriceScraper, MediaworldScraper]
     # scraper = [MediaworldScraper]
 
     processes = []
+
+    # COSI' NON CONDIVIDONO LA MEMORIA, E QUINDI OGNI LISTENER HA UNA SUA MEMORIA
     for i in range(scraper.__len__()):
         process = multiprocessing.Process(target=worker, args=(scraper[i], gestore))
         processes.append(process)
         process.start()
 
-    wairForProcess(processes)
-    # gestore = GestoreGrafici()
+    # wairForProcess(processes)
     # gestore.ottieniGrafico(AmazonScraper, "Samsung Galaxy S20+ 5g Tim Cosmic Gray 8gb/128gb Dual Sim", multiplePriceForDay=False)
+
+    # VERAMENTE CONCORRENTE
+    # thread = []
+    # for i in range(3):
+    #     t = GraphicGeneratorThread(gestore, scraper[i])
+    #     thread.append(t)
+    #     t.start()
+    #
+    # for process in thread:
+    #     process.join()

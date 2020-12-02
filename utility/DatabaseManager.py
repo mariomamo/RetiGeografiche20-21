@@ -34,6 +34,16 @@ class DatabaseManager:
             for prodotto in prodotti:
                 cursor.execute("INSERT INTO " + tablename + " (nome, url, prezzo, data) VALUES(%s, %s, %s, %s)", (prodotto.nome, prodotto.url, prodotto.prezzo, datetime.datetime.now()))
 
+
+    @staticmethod
+    def getProductCount(scraper: GenericScraper):
+        query = 'SELECT COUNT(*) FROM (SELECT DISTINCT nome FROM ''' + DatabaseManager.getTable(scraper) + ''') AS R1'''
+        with DatabaseManager.__conn.cursor() as cursor:
+            cursor.execute(query)
+            rows = cursor.fetchall()[0][0]
+
+        return rows
+
     @staticmethod
     def selectProduct(table: GenericScraper, nomeProdotto: str, dataInizio=None, dataFine=None, multiplePriceForDay=False):
         # Inizializzo le date se non ci sono

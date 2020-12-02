@@ -5,9 +5,9 @@ from EpriceScraper import EpriceScraper
 from MediaworldScraper import MediaworldScraper
 from utility.DatabaseManager import DatabaseManager
 from grafici import GestoreGrafici
-from utility.Listener import Listener
+from utility.Ascoltatore import Ascoltatore
 
-class MyListener(Listener):
+class MyAscoltatore(Ascoltatore):
 
     def update(self, operation, *args):
         # Lo stampo solo se è una stringa
@@ -118,7 +118,7 @@ def generateGraph():
                 enddate = None
 
             for scraper in checked_scraper:
-                lis = MyListener()
+                lis = MyAscoltatore()
                 gestore = GestoreGrafici()
                 gestore.addListeners([lis])
                 gestore.ottieniGrafici(scraper, dataInizio=startdate, dataFine=enddate, multiplePriceForDay=multipleprice, discontinuo=missingdata)

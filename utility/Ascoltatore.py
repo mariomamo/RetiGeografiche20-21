@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 
 
-class Listener:
+class Ascoltatore:
     __metaclass__ = ABCMeta
 
     @abstractmethod
