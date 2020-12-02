@@ -14,5 +14,5 @@ class Ascoltatore:
         raise Exception("NotImplementedException")
 
     @abstractmethod
-    def notify(self, *args):
+    def notify(self, operation, *args):
         raise Exception("NotImplementedException")

@@ -5,7 +5,22 @@ from EpriceScraper import EpriceScraper
 from MediaworldScraper import MediaworldScraper
 from utility.DatabaseManager import DatabaseManager
 from grafici import GestoreGrafici
+from utility.Listener import Listener
 
+class MyListener(Listener):
+
+    def update(self, operation, *args):
+        # Lo stampo solo se è una stringa
+        if operation == "prezzi":
+            try:
+                scraper = args[0][0]
+                messaggio = args[0][1]
+                if isinstance(messaggio, str):
+                    print(scraper, " ---> ", messaggio)
+            except Exception as ex:
+                print("[ECCEZIONE]: ", ex)
+        elif operation == "totprodotti":
+            print(f"Scraper:  {args[0][0]}, totale prodotti: {args[0][1]}")
 
 def generateGraph():
     data_inizio, data_fine = DatabaseManager.arco30Giorni()
@@ -103,7 +118,10 @@ def generateGraph():
                 enddate = None
 
             for scraper in checked_scraper:
-                GestoreGrafici.ottieniGrafici(scraper, data_inizio=startdate, data_fine=enddate, multiplePriceForDay=multipleprice, discontinuo=missingdata)
+                lis = MyListener()
+                gestore = GestoreGrafici()
+                gestore.addListeners([lis])
+                gestore.ottieniGrafici(scraper, dataInizio=startdate, dataFine=enddate, multiplePriceForDay=multipleprice, discontinuo=missingdata)
 
 def getImagesFromFolder(type: str):
     folder = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
@@ -217,20 +235,20 @@ def start():
     ]
 
     logo_viewer_column = [
-        [sg.Image(key="-LOGOIMAGE-", size=(640, 480), filename="../prodottiamazon/God of war.png")],
+        [sg.Image(key="-LOGOIMAGE-", size=(640, 350), filename="../prodottiamazon/God of war.png")],
     ]
 
     github_viewer_column = [
-        [sg.Image(key="-GITHUBIMAGE-", size=(640, 480), filename="../immagini/github.png")],
+        [sg.Image(key="-GITHUBIMAGE-", size=(640, 350), filename="../immagini/github.png")],
     ]
 
     doc_viewer_column = [
-        [sg.Image(key="-DOCIMAGE-", size=(640, 480), filename="../prodottiamazon/God of war.png")],
+        [sg.Image(key="-DOCIMAGE-", size=(640, 350), filename="../prodottiamazon/God of war.png")],
     ]
 
     layout = [
         [
-            sg.Column(button_column, size=(651, 480)),
+            sg.Column(button_column, size=(651, 350)),
             sg.VSeperator(),
             sg.Column(logo_viewer_column),
         ],

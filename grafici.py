@@ -12,16 +12,18 @@ from utility.Ascoltatore import  Ascoltatore
 
 class MyListener(Listener):
 
-    def update(self, *args):
+    def update(self, operation, *args):
         # Lo stampo solo se è una stringa
-        try:
-            scraper = args[0][0]
-            messaggio = args[0][1]
-            if isinstance(messaggio, str):
-                print(scraper, " ---> ", messaggio)
-        except Exception as ex:
-            print("[ECCEZIONE]: ", ex)
-
+        if operation == "prezzi":
+            try:
+                scraper = args[0][0]
+                messaggio = args[0][1]
+                if isinstance(messaggio, str):
+                    print(scraper, " ---> ", messaggio)
+            except Exception as ex:
+                print("[ECCEZIONE]: ", ex)
+        elif operation == "totprodotti":
+            print(f"Scraper:  {args[0][0]}, totale prodotti: {args[0][1]}")
 
 class GestoreGrafici(Ascoltatore):
 
@@ -51,6 +53,7 @@ class GestoreGrafici(Ascoltatore):
 
     def ottieniGrafici(self, scraper: GenericScraper, dataInizio=None, dataFine=None, multiplePriceForDay=False, discontinuo=True):
         tuttiIProdotti = DatabaseManager.selectProduct(scraper, "")
+        self.notify("totprodotti", DatabaseManager.getTable(scraper), tuttiIProdotti.__len__())
         for prodotto in tuttiIProdotti:
             # nomeProdotto = prodotto[1][0:prodotto[1].__len__() - 1]
             nomeProdotto = prodotto[1].strip("\n")
@@ -58,7 +61,7 @@ class GestoreGrafici(Ascoltatore):
             self.ottieniGrafico(scraper, nomeProdotto, dataInizio=dataInizio, dataFine=dataFine,
                                    multiplePriceForDay=multiplePriceForDay, discontinuo=discontinuo)
 
-        self.notify(DatabaseManager.getTable(scraper), ">>>>>> Generazione grafici completata <<<<<<")
+        self.notify("prezzi", DatabaseManager.getTable(scraper), ">>>>>> Generazione grafici completata <<<<<<")
 
 
     def ottieniGrafico(self, scraper: GenericScraper, nomeProdotto: str, dataInizio=None, dataFine=None, multiplePriceForDay=False, discontinuo=True) -> None:
@@ -90,7 +93,7 @@ class GestoreGrafici(Ascoltatore):
         self.costruisciGrafico(nomeProdotto, date, prezzi, cartellaOutput, discontinuo=discontinuo)
 
         if self.__listeners is not None:
-            self.notify(DatabaseManager.getTable(scraper), nomeProdotto)
+            self.notify("prezzi", DatabaseManager.getTable(scraper), nomeProdotto)
 
     def costruisciGrafico(self, nomeProdotto: str, date: list, prezzi: list, cartellaOutput: str, discontinuo=False):
         if discontinuo:
@@ -123,9 +126,9 @@ class GestoreGrafici(Ascoltatore):
     def removeListener(self, listener: Listener):
         self.__listeners.remove(listener)
 
-    def notify(self, *args):
+    def notify(self, operation, *args):
         for listener in self.__listeners:
-            listener.update(args)
+            listener.update(operation, args)
 
 
 def worker(scraper: GenericScraper, gestore: GestoreGrafici) -> None:

@@ -5,5 +5,5 @@ class Listener:
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def update(self, info):
+    def update(self, operation: str,  *info):
         raise Exception("NotImplementedException")
