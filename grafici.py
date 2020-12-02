@@ -6,20 +6,36 @@ from AmazonScraper import AmazonScraper
 from EpriceScraper import EpriceScraper
 from MediaworldScraper import MediaworldScraper
 import multiprocessing
+from utility.Listener import Listener
+from utility.Ascoltatore import  Ascoltatore
 
 
-class GestoreGrafici:
+class MyListener(Listener):
 
-    @staticmethod
-    def __ottieniPrezzi(prodotti: list) -> list:
+    def update(self, *args):
+        # Lo stampo solo se è una stringa
+        try:
+            scraper = args[0][0]
+            messaggio = args[0][1]
+            if isinstance(messaggio, str):
+                print(scraper, " ---> ", messaggio)
+        except Exception as ex:
+            print("[ECCEZIONE]: ", ex)
+
+
+class GestoreGrafici(Ascoltatore):
+
+    def __init__(self):
+        self.__listeners = []
+
+    def __ottieniPrezzi(self, prodotti: list) -> list:
         prezzi = list()
         for prodotto in prodotti:
             prezzi.append(prodotto[3])
 
         return prezzi
 
-    @staticmethod
-    def __ottieniData(prodotti: list) -> list:
+    def __ottieniData(self, prodotti: list) -> list:
         date = list()
         last_month = "0"
         for prodotto in prodotti:
@@ -33,13 +49,24 @@ class GestoreGrafici:
 
         return date
 
-    @staticmethod
-    def ottieniGrafico(scraper: GenericScraper, nomeProdotto: str, dataInizio=None, dataFine=None, multiplePriceForDay=False) -> None:
+    def ottieniGrafici(self, scraper: GenericScraper, dataInizio=None, dataFine=None, multiplePriceForDay=False, discontinuo=True):
+        tuttiIProdotti = DatabaseManager.selectProduct(scraper, "")
+        for prodotto in tuttiIProdotti:
+            # nomeProdotto = prodotto[1][0:prodotto[1].__len__() - 1]
+            nomeProdotto = prodotto[1].strip("\n")
+            # print(nomeProdotto)
+            self.ottieniGrafico(scraper, nomeProdotto, dataInizio=dataInizio, dataFine=dataFine,
+                                   multiplePriceForDay=multiplePriceForDay, discontinuo=discontinuo)
+
+        self.notify(DatabaseManager.getTable(scraper), ">>>>>> Generazione grafici completata <<<<<<")
+
+
+    def ottieniGrafico(self, scraper: GenericScraper, nomeProdotto: str, dataInizio=None, dataFine=None, multiplePriceForDay=False, discontinuo=True) -> None:
         nomeProdotto = nomeProdotto.replace("'", "''")
 
         prodotti = DatabaseManager.selectProduct(scraper, nomeProdotto, dataInizio=dataInizio, dataFine=dataFine, multiplePriceForDay=multiplePriceForDay)
-        prezzi = GestoreGrafici.__ottieniPrezzi(prodotti)
-        date = GestoreGrafici.__ottieniData(prodotti)
+        prezzi = self.__ottieniPrezzi(prodotti)
+        date = self.__ottieniData(prodotti)
 
         # print(prezzi)
         # print(date)
@@ -53,19 +80,21 @@ class GestoreGrafici:
         nomeProdotto = nomeProdotto.replace("''", "'")
         nomeProdotto = nomeProdotto.replace(":", " ")
         nomeProdotto = nomeProdotto.replace("/", "-")
-        #nomeProdotto = nomeProdotto.replace("+", "")
-        #nomeProdotto = nomeProdotto.replace(".", r".")
+        # nomeProdotto = nomeProdotto.replace("+", "")
+        # nomeProdotto = nomeProdotto.replace(".", r".")
 
         # Creo la cartella se non esiste
         Path(cartellaOutput).mkdir(parents=True, exist_ok=True)
         # print(cartellaOutput + '/' + nomeProdotto)
 
-        GestoreGrafici.costruisciGrafico(nomeProdotto, date, prezzi, cartellaOutput, discontinuo=True)
+        self.costruisciGrafico(nomeProdotto, date, prezzi, cartellaOutput, discontinuo=discontinuo)
 
-    @staticmethod
-    def costruisciGrafico(nomeProdotto: str, date: list, prezzi: list, cartellaOutput: str, discontinuo=False):
+        if self.__listeners is not None:
+            self.notify(DatabaseManager.getTable(scraper), nomeProdotto)
+
+    def costruisciGrafico(self, nomeProdotto: str, date: list, prezzi: list, cartellaOutput: str, discontinuo=False):
         if discontinuo:
-            prezzi = GestoreGrafici.rimuoviValoriInutili(prezzi)
+            prezzi = self.rimuoviValoriInutili(prezzi)
 
         pl.title(nomeProdotto)
         pl.plot(date, prezzi, "r-")
@@ -79,22 +108,34 @@ class GestoreGrafici:
         pl.close()
 
     '''Rimuove i valori pari a -1'''
-    @staticmethod
-    def rimuoviValoriInutili(prezzi: list) -> list:
+
+    def rimuoviValoriInutili(self, prezzi: list) -> list:
         for i in range(prezzi.__len__()):
             if prezzi[i] == -1:
                 prezzi[i] = None
 
         return prezzi
 
+    def addListeners(self, listeners: list = Listener):
+        self.__listeners.extend(listeners)
+        print(self.__listeners)
 
-def worker(scraper: GenericScraper) -> None:
-    tuttiIProdotti = DatabaseManager.selectProduct(scraper, "")
-    for prodotto in tuttiIProdotti:
-        # nomeProdotto = prodotto[1][0:prodotto[1].__len__() - 1]
-        nomeProdotto = prodotto[1].strip("\n")
-        print(nomeProdotto)
-        GestoreGrafici.ottieniGrafico(scraper, nomeProdotto, multiplePriceForDay=False)
+    def removeListener(self, listener: Listener):
+        self.__listeners.remove(listener)
+
+    def notify(self, *args):
+        for listener in self.__listeners:
+            listener.update(args)
+
+
+def worker(scraper: GenericScraper, gestore: GestoreGrafici) -> None:
+    gestore.ottieniGrafici(scraper)
+    # tuttiIProdotti = DatabaseManager.selectProduct(scraper, "")
+    # for prodotto in tuttiIProdotti:
+    #     # nomeProdotto = prodotto[1][0:prodotto[1].__len__() - 1]
+    #     nomeProdotto = prodotto[1].strip("\n")
+    #     # print(nomeProdotto)
+    #     gestore.ottieniGrafico(scraper, nomeProdotto, multiplePriceForDay=False)
 
 
 def wairForProcess(processes: list) -> None:
@@ -103,14 +144,17 @@ def wairForProcess(processes: list) -> None:
 
 
 if __name__ == '__main__':
+    gestore = GestoreGrafici()
+    gestore.addListeners([MyListener()])
     scraper = [AmazonScraper, EpriceScraper, MediaworldScraper]
     # scraper = [MediaworldScraper]
 
     processes = []
     for i in range(scraper.__len__()):
-        process = multiprocessing.Process(target=worker, args=(scraper[i],))
+        process = multiprocessing.Process(target=worker, args=(scraper[i], gestore))
         processes.append(process)
         process.start()
 
     wairForProcess(processes)
-    # GestoreGrafici.ottieniGrafico(AmazonScraper, "Samsung Galaxy S20+ 5g Tim Cosmic Gray 8gb/128gb Dual Sim", multiplePriceForDay=False)
+    # gestore = GestoreGrafici()
+    # gestore.ottieniGrafico(AmazonScraper, "Samsung Galaxy S20+ 5g Tim Cosmic Gray 8gb/128gb Dual Sim", multiplePriceForDay=False)

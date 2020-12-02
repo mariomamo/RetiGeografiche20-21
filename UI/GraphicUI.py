@@ -6,6 +6,7 @@ from MediaworldScraper import MediaworldScraper
 from utility.DatabaseManager import DatabaseManager
 from grafici import GestoreGrafici
 
+
 def generateGraph():
     data_inizio, data_fine = DatabaseManager.arco30Giorni()
     checked_scraper = [AmazonScraper, EpriceScraper, MediaworldScraper]
@@ -53,7 +54,7 @@ def generateGraph():
             sg.Button("Indietro"),
         ]
     ]
-    
+
     window = sg.Window("Generatore grafici", option_rows)
 
     while True:
@@ -123,7 +124,6 @@ def getImagesFromFolder(type: str):
 
 
 def showgraph():
-
     back_row = [
         sg.Button("Indietro"),
         sg.Button("Chiudi"),
