@@ -4,6 +4,7 @@ from AmazonScraper import AmazonScraper
 from EpriceScraper import EpriceScraper
 from MediaworldScraper import MediaworldScraper
 from utility.DatabaseManager import DatabaseManager
+from grafici import GestoreGrafici
 
 def generateGraph():
     data_inizio, data_fine = DatabaseManager.arco30Giorni()
@@ -26,13 +27,13 @@ def generateGraph():
         [
             sg.Text("Data inizio:", size=(20, 0)),
             sg.CalendarButton('Choose Date', target=(2, 2), key='startDate', format='%Y-%m-%d'),
-            sg.Text(data_inizio, size=(20, 0)),
+            sg.Text(data_inizio, size=(20, 0), key="-STARTDATETEXT-"),
 
         ],
         [
             sg.Text("Data Fine:", size=(20, 0)),
             sg.CalendarButton('Choose Date', target=(3, 2), key='endDate', format='%Y-%m-%d'),
-            sg.Text(data_fine, size=(20, 0)),
+            sg.Text(data_fine, size=(20, 0), key="-ENDDATETEXT-"),
 
         ],
         [
@@ -57,7 +58,6 @@ def generateGraph():
 
     while True:
         event, values = window.read()
-        print(event)
 
         if event == "Indietro":
             window.close()
@@ -81,8 +81,28 @@ def generateGraph():
                 checked_scraper.remove(MediaworldScraper)
             else:
                 checked_scraper.append(MediaworldScraper)
+        elif event == "datetutti":
+            window['-STARTDATETEXT-'].update("Tutte")
+            window['-ENDDATETEXT-'].update("Tutte")
+        elif event == "datemese":
+            data_inizio, data_fine = DatabaseManager.tuttoIlMese()
+            window['-STARTDATETEXT-'].update(data_inizio)
+            window['-ENDDATETEXT-'].update(data_fine)
+        elif event == "date31day":
+            data_inizio, data_fine = DatabaseManager.arco30Giorni()
+            window['-STARTDATETEXT-'].update(data_inizio)
+            window['-ENDDATETEXT-'].update(data_fine)
+        elif event == "Genera":
+            startdate = window['-STARTDATETEXT-'].DisplayText
+            enddate = window['-ENDDATETEXT-'].DisplayText
+            multipleprice = values["mistutti"]
+            missingdata = values["missyes"]
+            if startdate == "Tutte" and enddate == "Tutte":
+                startdate = None
+                enddate = None
 
-
+            for scraper in checked_scraper:
+                GestoreGrafici.ottieniGrafici(scraper, data_inizio=startdate, data_fine=enddate, multiplePriceForDay=multipleprice, discontinuo=missingdata)
 
 def getImagesFromFolder(type: str):
     folder = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
@@ -171,8 +191,6 @@ def showgraph():
             window["-CURFOLDER-"].update(curfolder)
             window["-FILE LIST-"].update(fnames)
         elif event == "-FILE LIST-":  # A file was chosen from the listbox
-
-
             try:
                 filename = os.path.join(
                     window["-CURFOLDER-"].DisplayText, values["-FILE LIST-"][0]
@@ -182,10 +200,50 @@ def showgraph():
             except:
                 pass
 
-
-
 def start():
-    layout = [[sg.Text("Progetto  Reti geografiche 2020-21")], [sg.Button("Vedi i grafici")], [sg.Button("Genera i grafici")], [sg.Button("Chiudi")]]
+    button_column = [
+        [
+            sg.Text("Progetto  Reti geografiche 2020-21")
+        ],
+        [
+            sg.Button("Vedi i grafici")
+        ],
+        [
+            sg.Button("Genera i grafici")
+        ],
+        [
+            sg.Button("Chiudi")
+        ]
+    ]
+
+    logo_viewer_column = [
+        [sg.Image(key="-LOGOIMAGE-", size=(640, 480), filename="../prodottiamazon/God of war.png")],
+    ]
+
+    github_viewer_column = [
+        [sg.Image(key="-GITHUBIMAGE-", size=(640, 480), filename="../immagini/github.png")],
+    ]
+
+    doc_viewer_column = [
+        [sg.Image(key="-DOCIMAGE-", size=(640, 480), filename="../prodottiamazon/God of war.png")],
+    ]
+
+    layout = [
+        [
+            sg.Column(button_column, size=(651, 480)),
+            sg.VSeperator(),
+            sg.Column(logo_viewer_column),
+        ],
+        [
+            sg.HSeparator()
+        ],
+        [
+            sg.Column(github_viewer_column),
+            sg.VSeperator(),
+            sg.Column(doc_viewer_column),
+        ],
+    ]
+
 
     # Create the window
     window = sg.Window("Progetto Reti geografiche", layout)

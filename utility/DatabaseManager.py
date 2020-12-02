@@ -118,7 +118,7 @@ class DatabaseManager:
         Restituisce il range di tate del mese corrente
     '''
     @staticmethod
-    def __tuttoIlMese():
+    def tuttoIlMese():
         oggi = str(datetime.date.today())
         anno = oggi[0:4]
         mese = oggi[5:7]
