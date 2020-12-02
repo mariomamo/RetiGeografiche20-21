@@ -44,7 +44,6 @@ from threading import Thread
 #                 self.__threadLock.release()
 
 class GraphicGeneratorAscoltatore(Ascoltatore):
-    __prodotti = dict()
 
     def update(self, operation, *args):
         # Lo stampo solo se è una stringa
