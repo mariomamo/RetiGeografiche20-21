@@ -8,6 +8,7 @@ from utility.DatabaseManager import DatabaseManager
 def generateGraph():
     data_inizio, data_fine = DatabaseManager.arco30Giorni()
     checked_scraper = [AmazonScraper, EpriceScraper, MediaworldScraper]
+    # data_inizio, data_fine = None, None
 
     option_rows = [
         [
@@ -185,6 +186,7 @@ def showgraph():
 
 
 def start():
+    print(os.getcwd())
     layout = [[sg.Text("Progetto  Reti geografiche 2020-21")], [sg.Button("Vedi i grafici")], [sg.Button("Genera i grafici")], [sg.Button("Chiudi")]]
 
     # Create the window

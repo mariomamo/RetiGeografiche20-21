@@ -38,11 +38,11 @@ class DatabaseManager:
     def selectProduct(table: GenericScraper, nomeProdotto: str, dataInizio=None, dataFine=None, multiplePriceForDay=False):
         # Inizializzo le date se non ci sono
         if dataInizio is None and dataFine is None:
-            dataInizio, dataFine = DatabaseManager.__arco30Giorni()
+            dataInizio, dataFine = DatabaseManager.arco30Giorni()
         elif dataInizio is None:
-            dataInizio, _ = DatabaseManager.__arco30Giorni()
+            dataInizio, _ = DatabaseManager.arco30Giorni()
         elif dataFine is None:
-            _, dataFine = DatabaseManager.__arco30Giorni()
+            _, dataFine = DatabaseManager.arco30Giorni()
 
         # print(dataInizio)
         # print(dataFine)
