@@ -1,18 +1,9 @@
 from abc import ABCMeta, abstractmethod
-from utility.Listener import Listener
 
 
-class Ascoltatore:
+class Listener:
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def addListeners(self, listeners: list = Listener):
-        raise Exception("NotImplementedException")
-
-    @abstractmethod
-    def removeListener(self, listener: Listener):
-        raise Exception("NotImplementedException")
-
-    @abstractmethod
-    def notify(self, operation, *args):
+    def update(self, operation: str,  *info):
         raise Exception("NotImplementedException")
