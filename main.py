@@ -24,7 +24,6 @@ def create_process(jobs, report):
         process.daemon = True
         process.start()
 
-
 def create_jobs(scrapers, jobs):
     for scraper in scrapers:
         jobs.put(scraper)
@@ -33,9 +32,9 @@ def create_jobs(scrapers, jobs):
 def waitForComplete(jobs, report):
     jobs.join()
 
-    # while not report.empty():
-    #     tupla = report.get_nowait()
-    #     DatabaseManager.insert(tupla[0], tupla[1])
+    while not report.empty():
+        tupla = report.get_nowait()
+        DatabaseManager.insert(tupla[0], tupla[1])
 
 
 if __name__ == "__main__":

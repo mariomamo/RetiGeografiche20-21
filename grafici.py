@@ -15,6 +15,7 @@ from threading import Thread
 
 # class GraphicGeneratorAscoltatore(Ascoltatore):
 #     # __threadlock serve per gestire il lock e non far accavallare le print
+#    __threadLock = threading.Lock()
 #     __threadLock = threading.Lock()
 #     __prodotti = dict()
 #     __alreadyPrintedTot = False
@@ -95,15 +96,23 @@ class GestoreGrafici(Ascoltabile):
         # self.notify("totprodotti", DatabaseManager.getTable(scraper), numeroProdotti)
         datiRitorno = []
 
+        cicli = 0
         for prodotto in tuttiIProdotti:
+            cicli += 1
             # nomeProdotto = prodotto[1][0:prodotto[1].__len__() - 1]
-            nomeProdotto = prodotto[1].strip("\n")
+            nomeProdotto = prodotto[0].strip("\n")
             # print(nomeProdotto)
-            datiRitorno.append(self.ottieniGrafico(scraper, nomeProdotto, dataInizio=dataInizio, dataFine=dataFine,
-                                multiplePriceForDay=multiplePriceForDay, discontinuo=discontinuo, costruisciGrafico=False))
+            prod = self.ottieniGrafico(scraper, nomeProdotto, dataInizio=dataInizio, dataFine=dataFine,
+                                                 multiplePriceForDay=multiplePriceForDay, discontinuo=discontinuo,
+                                                 costruisciGrafico=False)
+            # print("PROD: ", nomeProdotto)
+            self.notify("new_product", scraper, *prod)
+            datiRitorno.append(prod)
 
-        self.notify("prezzi", DatabaseManager.getTable(scraper), ">>>>>> Generazione grafici completata <<<<<<")
-        return datiRitorno
+        print(f"{scraper} - FINITONEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE - {cicli} cicli")
+
+        self.notify("fine", scraper, ">>>>>> Generazione grafici completata <<<<<<")
+        #return datiRitorno
 
     def ottieniGrafici(self, scraper: GenericScraper, dataInizio=None, dataFine=None, multiplePriceForDay=False, discontinuo=True):
         tuttiIProdotti = DatabaseManager.selectProduct(scraper, "")
@@ -119,7 +128,7 @@ class GestoreGrafici(Ascoltabile):
             self.ottieniGrafico(scraper, nomeProdotto, dataInizio=dataInizio, dataFine=dataFine,
                                    multiplePriceForDay=multiplePriceForDay, discontinuo=discontinuo)
 
-        self.notify("prezzi", DatabaseManager.getTable(scraper), ">>>>>> Generazione grafici completata <<<<<<")
+        self.notify("fine", DatabaseManager.getTable(scraper), ">>>>>> Generazione grafici completata <<<<<<")
 
 
     def ottieniGrafico(self, scraper: GenericScraper, nomeProdotto: str, dataInizio=None, dataFine=None, multiplePriceForDay=False, discontinuo=True, costruisciGrafico = True):

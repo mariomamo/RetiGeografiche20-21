@@ -164,7 +164,7 @@ class DatabaseManager:
             """
         # Altrimenti cerca tutti i prodotti
         else:
-            query = "SELECT * FROM " + tablename + " ORDER BY id"
+            query = "SELECT DISTINCT(nome) FROM (SELECT * FROM " + tablename + " ORDER BY id) AS R1;"
 
         return query
 
