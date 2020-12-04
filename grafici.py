@@ -87,6 +87,24 @@ class GestoreGrafici(Ascoltabile):
 
         return date
 
+    def ottieniDatiGrafici(self, scraper: GenericScraper, dataInizio=None, dataFine=None, multiplePriceForDay=False, discontinuo=True):
+        tuttiIProdotti = DatabaseManager.selectProduct(scraper, "")
+
+        # TODO: Utilizzarlo fuori, è meglio
+        # numeroProdotti = DatabaseManager.getProductCount(scraper)
+        # self.notify("totprodotti", DatabaseManager.getTable(scraper), numeroProdotti)
+        datiRitorno = []
+
+        for prodotto in tuttiIProdotti:
+            # nomeProdotto = prodotto[1][0:prodotto[1].__len__() - 1]
+            nomeProdotto = prodotto[1].strip("\n")
+            # print(nomeProdotto)
+            datiRitorno.append(self.ottieniGrafico(scraper, nomeProdotto, dataInizio=dataInizio, dataFine=dataFine,
+                                multiplePriceForDay=multiplePriceForDay, discontinuo=discontinuo, costruisciGrafico=False))
+
+        self.notify("prezzi", DatabaseManager.getTable(scraper), ">>>>>> Generazione grafici completata <<<<<<")
+        return datiRitorno
+
     def ottieniGrafici(self, scraper: GenericScraper, dataInizio=None, dataFine=None, multiplePriceForDay=False, discontinuo=True):
         tuttiIProdotti = DatabaseManager.selectProduct(scraper, "")
 
@@ -104,7 +122,7 @@ class GestoreGrafici(Ascoltabile):
         self.notify("prezzi", DatabaseManager.getTable(scraper), ">>>>>> Generazione grafici completata <<<<<<")
 
 
-    def ottieniGrafico(self, scraper: GenericScraper, nomeProdotto: str, dataInizio=None, dataFine=None, multiplePriceForDay=False, discontinuo=True) -> None:
+    def ottieniGrafico(self, scraper: GenericScraper, nomeProdotto: str, dataInizio=None, dataFine=None, multiplePriceForDay=False, discontinuo=True, costruisciGrafico = True):
         nomeProdotto = nomeProdotto.replace("'", "''")
 
         prodotti = DatabaseManager.selectProduct(scraper, nomeProdotto, dataInizio=dataInizio, dataFine=dataFine, multiplePriceForDay=multiplePriceForDay)
@@ -130,10 +148,15 @@ class GestoreGrafici(Ascoltabile):
         Path(cartellaOutput).mkdir(parents=True, exist_ok=True)
         # print(cartellaOutput + '/' + nomeProdotto)
 
-        self.costruisciGrafico(nomeProdotto, date, prezzi, cartellaOutput, discontinuo=discontinuo)
-
         if self.__listeners is not None:
             self.notify("prezzi", DatabaseManager.getTable(scraper), nomeProdotto)
+
+        if costruisciGrafico:
+            self.costruisciGrafico(nomeProdotto, date, prezzi, cartellaOutput, discontinuo=discontinuo)
+        else:
+            return nomeProdotto, date, prezzi, cartellaOutput, discontinuo
+
+
 
     def costruisciGrafico(self, nomeProdotto: str, date: list, prezzi: list, cartellaOutput: str, discontinuo=False):
         if discontinuo:

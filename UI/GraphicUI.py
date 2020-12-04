@@ -1,3 +1,7 @@
+import time
+
+from threading import Thread
+
 import PySimpleGUI as sg
 import os.path
 from AmazonScraper import AmazonScraper
@@ -7,8 +11,19 @@ from utility.DatabaseManager import DatabaseManager
 from grafici import GestoreGrafici
 from utility.Ascoltatore import Ascoltatore
 
-class MyAscoltatore(Ascoltatore):
+# class ProgressBarThread (Thread):
+#     window = None
+#
+#     def __init__(self, window):
+#         Thread.__init__(self)
+#         self.window = window
+#
+#     def run(self):
+#         print("wewe")
+#         while True:
+#             event, values = self.window.read()
 
+class ProgressBarListner(Ascoltatore):
     def update(self, operation, *args):
         # Lo stampo solo se è una stringa
         if operation == "prezzi":
@@ -20,7 +35,114 @@ class MyAscoltatore(Ascoltatore):
             except Exception as ex:
                 print("[ECCEZIONE]: ", ex)
         elif operation == "totprodotti":
-            print(f"Scraper:  {args[0][0]}, totale prodotti: {args[0][1]}")
+            scraper = args[0][0]
+            numero_prodotti = args[0][1]
+            print(f">>> {scraper} = {numero_prodotti} prodotti")
+
+class ProgressWindow():
+
+
+    window = None
+
+    def long_function_thread(self, window, checked_scraper, datainizio, datafine, multipleprice, missingdata):
+        progressbarlistner = ProgressBarListner()
+        for scraper in checked_scraper:
+            gestore = GestoreGrafici()
+            gestore.addListeners([progressbarlistner])
+            datiProdottiScraper = gestore.ottieniDatiGrafici(scraper, dataInizio=datainizio, dataFine=datafine, multiplePriceForDay=multipleprice, discontinuo=missingdata)
+
+
+    def azzera(self):
+        self.text_layout = [
+            [
+                sg.Text("Amazon", key="-amazonText-", visible=False),
+            ],
+            [
+                sg.Text("Eprice", key="-epriceText-", visible=False),
+            ],
+            [
+                sg.Text("Mediaworld", key="-mediaworldText-", visible=False),
+            ]
+        ]
+
+        self.progress_layout = [
+            [
+                sg.ProgressBar(1000, size=(20, 20), key='progbaramazon', visible=False),
+            ],
+            [
+                sg.ProgressBar(1000, size=(20, 20), key='progbareprice', visible=False),
+            ],
+            [
+                sg.ProgressBar(1000, size=(20, 20), key='progbarmediaworld', visible=False)
+            ]
+        ]
+
+        self.layout = [
+            [
+                sg.Column(self.text_layout),
+                sg.VerticalSeparator(),
+                sg.Column(self.progress_layout)
+            ],
+            [
+                sg.Button("Chiudi")
+            ]
+
+        ]
+
+    def open(self, checked_scraper: list, datainizio, datafine, multipleprice, missingdata):
+        self.azzera()
+        self.window = sg.Window("Progress bar grafici", self.layout)
+        if checked_scraper.__contains__(AmazonScraper):
+            self.window["-amazonText-"].Visible = True
+            self.window["progbaramazon"].Visible = True
+
+        if checked_scraper.__contains__(EpriceScraper):
+            self.window["-epriceText-"].Visible = True
+            self.window["progbareprice"].Visible = True
+
+        if checked_scraper.__contains__(MediaworldScraper):
+            self.window["-mediaworldText-"].Visible = True
+            self.window["progbarmediaworld"].Visible = True
+
+        #ascoltatore = ProgressBarListner()
+        #Thread(target=self.long_function_thread, args=(self.window, checked_scraper, datainizio, datafine, multipleprice, missingdata), daemon=True).start()
+        gestore = GestoreGrafici()
+        #progressbarlistner = ProgressBarListner()
+
+        while True:
+            if len(checked_scraper) > 0:
+                i = 0
+                event, values = self.window.read(timeout=100)
+                scraper = checked_scraper.pop()
+                #gestore.addListeners([progressbarlistner])
+                datiProdottiScraper = gestore.ottieniDatiGrafici(scraper, dataInizio=datainizio, dataFine=datafine, multiplePriceForDay=multipleprice, discontinuo=missingdata)
+
+                for dati in datiProdottiScraper:
+                    #print(*dati)
+                    gestore.ottieniGrafico(scraper, dati[0], datainizio, datafine, multipleprice, missingdata, )
+                    #AGGIORNA
+                    print(i)
+                    i += 1
+                    tot = (1000/len(datiProdottiScraper)) * i
+                    if scraper == AmazonScraper:
+                        self.window['progbaramazon'].update_bar(tot)
+                    elif scraper == EpriceScraper:
+                        self.window['progbareprice'].update_bar(tot)
+                    elif scraper == MediaworldScraper:
+                        self.window['progbarmediaworld'].update_bar(tot)
+
+            else:
+                event, values = self.window.read()
+
+            if event == 'Chiudi' or event == sg.WIN_CLOSED:
+                self.window.Close()
+                break
+            else:
+                print(event, values)
+        #thread = ProgressBarThread(self.window)
+        #thread.start()
+
+
 
 def generateGraph():
     data_inizio, data_fine = DatabaseManager.arco30Giorni()
@@ -109,19 +231,22 @@ def generateGraph():
             window['-STARTDATETEXT-'].update(data_inizio)
             window['-ENDDATETEXT-'].update(data_fine)
         elif event == "Genera":
-            startdate = window['-STARTDATETEXT-'].DisplayText
-            enddate = window['-ENDDATETEXT-'].DisplayText
+            data_inizio = window['-STARTDATETEXT-'].DisplayText
+            data_fine = window['-ENDDATETEXT-'].DisplayText
             multipleprice = values["mistutti"]
             missingdata = values["missyes"]
-            if startdate == "Tutte" and enddate == "Tutte":
-                startdate = None
-                enddate = None
+            if data_inizio == "Tutte" and data_fine == "Tutte":
+                data_inizio = None
+                data_fine = None
 
-            for scraper in checked_scraper:
-                lis = MyAscoltatore()
-                gestore = GestoreGrafici()
-                gestore.addListeners([lis])
-                gestore.ottieniGrafici(scraper, dataInizio=startdate, dataFine=enddate, multiplePriceForDay=multipleprice, discontinuo=missingdata)
+            window.close()
+            p = ProgressWindow()
+            p.open(checked_scraper, data_inizio, data_fine, multipleprice, missingdata)
+
+            break
+
+    generateGraph()
+
 
 def getImagesFromFolder(type: str):
     folder = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
