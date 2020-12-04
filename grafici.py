@@ -238,6 +238,7 @@ if __name__ == '__main__':
     # gestore.ottieniGrafico(AmazonScraper, "Samsung Galaxy S20+ 5g Tim Cosmic Gray 8gb/128gb Dual Sim", multiplePriceForDay=False)
 
     # VERAMENTE CONCORRENTE
+    # COSÌ CONDIVIDONO LA MEMORIA E IL LISTENER HA MEMORIA COMUNE
     # thread = []
     # for i in range(3):
     #     t = GraphicGeneratorThread(gestore, scraper[i])

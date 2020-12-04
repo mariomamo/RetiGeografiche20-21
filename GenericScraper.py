@@ -50,15 +50,14 @@ class GenericScraper:
                     # Altrimenti si imposta come valore del prodotto -1 e si continua con un nuovo prodotto
                     prodotto.prezzo = -1
                     result.append(prodotto)
-                    print("[REDIRECT ERROR]: ", prodotto.nome, ", ", prodotto.url, ", ", prodotto.prezzo, sep='')
+                    print(f"[{self.getScraperName().upper()} - REDIRECT ERROR]: {prodotto.nome}, {prodotto.url}, {prodotto.prezzo}", sep='')
             else:
                 result = self.continuaRichiesta(prodotto, i, prodotti, result)
-
 
         return result
 
     def continuaRichiesta(self, prodotto, i, prodotti, result):
-        print('status: ', self.request.status_code, " - ", prodotto.url)
+        # print('status: ', self.request.status_code, " - ", prodotto.url)
 
         # Controllo errori
         # TODO: se l'errore è 500 la richiesta viene fatta dopo un pò
@@ -77,17 +76,33 @@ class GenericScraper:
             # print('REQUEST: ', request.text)
             val = extractor.extract(self.request.text)
 
-            # Leggo il prezzo letto
-            price = self.getPrice(val)
+            # Controllo se il prodotto è disponibile
+            available = self.isAvailable(val)
 
-            # Rimuovo eventuali caratteri diversi dai numeri che possono esserci all'interno, compreso il simbolo €
-            price = self.fixPrice(price)
-            print("PRICE: ", price)
+            # Se il prodotto è disponibile
+            if available:
+                # Leggo il prezzo letto
+                price = self.getPrice(val)
 
-            try:
-                prodotto.prezzo = float(price)
-            except:
-                print("Eccezzzion MANNAAAAGG")
+                # Rimuovo eventuali caratteri diversi dai numeri che possono esserci all'interno, compreso il simbolo €
+                price = self.fixPrice(price)
+
+                try:
+                    prodotto.prezzo = float(price)
+                except:
+                    print("Eccezzzion MANNAAAAGG")
+            else:
+                # Se il prodotto non è disponibile
+                prodotto.prezzo = -1
+                # print(f"{prodotto.nome} NON DISPONIBILE: {prodotto.prezzo}")
+
+            print(f"[{self.getScraperName().upper()}", end="")
+            if available:
+                print(" - DISPONIBILE] ", end="")
+            else:
+                print(" - NON DISPONIBILE] ", end="")
+
+            print(f"{prodotto.nome} - {prodotto.url} = € {prodotto.prezzo} ")
 
             # Qui dovrei avvisare il main e passargli i valori
             if i < prodotti.__len__() - 1: time.sleep(self.deelay_time)
@@ -97,12 +112,27 @@ class GenericScraper:
 
         return result
 
+    @abstractmethod
+    def getScraperName(self):
+        return "generic scraper"
+
     def getPrice(self, val: dict):
         price = None
         if val['price'] is not None and val['price'].__len__() > 0:
             price = val['price']
 
         return price
+
+    def isAvailable(self, val: dict) -> bool:
+        available = True
+
+        # Se c'è il valore per vedere se il prezzo è disponibile
+        if 'price_not_available' in val:
+            # Se c'è del testo in 'price_not_available' vuol dire che il prodotto non è disponibile
+            if val['price_not_available'] is not None and val['price_not_available'].__len__() > 0:
+                available = False
+
+        return available
 
     def waitRequest(self, numeroRichiesta: int):
         time.sleep(3)
@@ -130,7 +160,7 @@ class GenericScraper:
         if price is None:
             return -1
 
-        print("price: ", price)
+        # print("price: ", price)
 
         # Prendo tutti i numeri che sono nella stringa, facendo lo split con la ','
         # Restituisce un array contenente tutti i numeri

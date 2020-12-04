@@ -3,9 +3,12 @@ from utility.FileUtility import *
 
 
 class EpriceScraper(GenericScraper):
+    __prePathMario = "D:/Mario/Reti geografiche/RetiGeografiche20-21/"
+    __prePAth = __prePathMario
+
     # TODO: mettere i path relativi
-    extractor_file = 'files/eprice_selector.yml'
-    input_file = 'files/eprice_product_list.txt'
+    extractor_file = __prePAth + 'files/eprice_selector.yml'
+    input_file = __prePAth + 'files/eprice_product_list.txt'
 
     # extractor_file = 'C:/Users/Mario/Desktop/Mario/Progetti/RetiGeografiche20-21/files/eprice_selector.yml'
     # input_file = 'C:/Users/Mario/Desktop/Mario/Progetti/RetiGeografiche20-21/files/eprice_product_list.txt'
@@ -55,3 +58,6 @@ class EpriceScraper(GenericScraper):
                     break
 
         return result
+
+    def getScraperName(self):
+        return "eprice"

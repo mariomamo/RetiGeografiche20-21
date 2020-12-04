@@ -4,9 +4,12 @@ from random import randrange
 
 
 class AmazonScraper(GenericScraper):
+    __prePathMario = "D:/Mario/Reti geografiche/RetiGeografiche20-21/"
+    __prePAth = __prePathMario
+
     # TODO: mettere i path relativi
-    extractor_file = 'files/amazon_selector.yml'
-    input_file = 'files/amazon_product_list.txt'
+    extractor_file = __prePAth + 'files/amazon_selector.yml'
+    input_file = __prePAth + 'files/amazon_product_list.txt'
 
     # extractor_file = 'C:/Users/Mario/Desktop/Mario/Progetti/RetiGeografiche20-21/files/amazon_selector.yml'
     # input_file = 'C:/Users/Mario/Desktop/Mario/Progetti/RetiGeografiche20-21/files/amazon_product_list.txt'
@@ -69,6 +72,9 @@ class AmazonScraper(GenericScraper):
                     break
 
         return result
+
+    def getScraperName(self):
+        return "amazon"
 
     # def fixPrice(self, price: str):
     #     print("OKOK")

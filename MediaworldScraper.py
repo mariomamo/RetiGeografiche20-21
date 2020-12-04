@@ -8,8 +8,11 @@ from utility.FileUtility import *
 
 
 class MediaworldScraper(GenericScraper):
-    extractor_file = 'files/mediaworld_selector.yml'
-    input_file = 'files/mediaworld_product_list.txt'
+    __prePathMario = "D:/Mario/Reti geografiche/RetiGeografiche20-21/"
+    __prePAth = __prePathMario
+
+    extractor_file = __prePAth + 'files/mediaworld_selector.yml'
+    input_file = __prePAth + 'files/mediaworld_product_list.txt'
 
     # extractor_file = 'C:/Users/Mario/Desktop/Mario/Progetti/RetiGeografiche20-21/files/mediaworld_selector.yml'
     # input_file = 'C:/Users/Mario/Desktop/Mario/Progetti/RetiGeografiche20-21/files/mediaworld_product_list.txt'
@@ -59,7 +62,7 @@ class MediaworldScraper(GenericScraper):
 
     '''Restituendo False la richiesta non continua e viene assegnato come valore al prodotto -1'''
     def onRedirect(self):
-        print('è stato eseguito un redirect, mi fermo')
+        # print('è stato eseguito un redirect, mi fermo')
         return False
 
     '''Se MediaWorld non risponde aspetto fino a 2 volte, prima 60 e poi 120 secondi e riprovo'''
@@ -112,3 +115,6 @@ class MediaworldScraper(GenericScraper):
                     break
 
         return result
+
+    def getScraperName(self):
+        return "mediaworld"

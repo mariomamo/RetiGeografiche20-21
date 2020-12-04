@@ -7,3 +7,6 @@ price:
 price_deal:
     css: '.price-start'
     type: Text
+price_not_available:
+    css: '.services__item'
+    ype: Text

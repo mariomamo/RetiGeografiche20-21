@@ -33,14 +33,14 @@ def create_jobs(scrapers, jobs):
 def waitForComplete(jobs, report):
     jobs.join()
 
-    while not report.empty():
-        tupla = report.get_nowait()
-        DatabaseManager.insert(tupla[0], tupla[1])
+    # while not report.empty():
+    #     tupla = report.get_nowait()
+    #     DatabaseManager.insert(tupla[0], tupla[1])
 
 
 if __name__ == "__main__":
     scrapers = [AmazonScraper(), EpriceScraper(), MediaworldScraper()]
-    # scrapers = [AmazonScraper()]
+    # scrapers = [EpriceScraper()]
 
     report = Queue()
     jobs = JoinableQueue()

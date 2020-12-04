@@ -10,6 +10,9 @@ price_deal:
 price_promo:
     css: '#priceblock_pospromoprice'
     type: Text
+price_not_available:
+    css: '.a-size-medium'
+    ype: Text
 short_description:
     css: '#featurebullets_feature_div'
     type: Text
