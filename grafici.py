@@ -123,7 +123,7 @@ class GestoreGrafici(Ascoltabile):
 
         for prodotto in tuttiIProdotti:
             # nomeProdotto = prodotto[1][0:prodotto[1].__len__() - 1]
-            nomeProdotto = prodotto[1].strip("\n")
+            nomeProdotto = prodotto[0].strip("\n")
             # print(nomeProdotto)
             self.ottieniGrafico(scraper, nomeProdotto, dataInizio=dataInizio, dataFine=dataFine,
                                    multiplePriceForDay=multiplePriceForDay, discontinuo=discontinuo)
@@ -233,7 +233,7 @@ if __name__ == '__main__':
     gestore = GestoreGrafici()
     gestore.addListeners([GraphicGeneratorAscoltatore()])
     scraper = [AmazonScraper, EpriceScraper, MediaworldScraper]
-    # scraper = [MediaworldScraper]
+    # scraper = [AmazonScraper]
 
     processes = []
 

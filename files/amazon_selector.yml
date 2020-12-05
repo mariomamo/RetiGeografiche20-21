@@ -11,7 +11,7 @@ price_promo:
     css: '#priceblock_pospromoprice'
     type: Text
 price_not_available:
-    css: '.a-size-medium'
+    css: '.availability'
     ype: Text
 short_description:
     css: '#featurebullets_feature_div'

@@ -24,6 +24,8 @@ class MediaworldScraper(GenericScraper):
     __try_404 = 1
     __404_sleep_time = 60
 
+    ERRORE_NON_DISPONIBILE = "non disponibile"
+
     def __init__(self):
         # TODO: controllare se sono tutti necessari
         self.headers = {
@@ -59,6 +61,18 @@ class MediaworldScraper(GenericScraper):
             price = val['price_deal']
 
         return price
+
+    def isAvailable(self, val: dict) -> bool:
+        available = True
+
+        # Se c'è il valore per vedere se il prezzo è disponibile
+        if 'price_not_available' in val:
+            # Se c'è del testo in 'price_not_available' vuol dire che il prodotto non è disponibile
+            if val['price_not_available'] is not None and self.ERRORE_NON_DISPONIBILE in val['price_not_available']:
+                available = False
+
+        # print(f"{val['price_not_available']}")
+        return available
 
     '''Restituendo False la richiesta non continua e viene assegnato come valore al prodotto -1'''
     def onRedirect(self):
