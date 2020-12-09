@@ -220,7 +220,7 @@ def generateGraph():
             window['-STARTDATETEXT-'].update("Tutte")
             window['-ENDDATETEXT-'].update("Tutte")
         elif event == "datemese":
-            data_inizio, data_fine = DatabaseManager.tuttoIlMese()
+            data_inizio, data_fine = DatabaseManager.getDateTuttoIlMese()
             window['-STARTDATETEXT-'].update(data_inizio)
             window['-ENDDATETEXT-'].update(data_fine)
         elif event == "date31day":

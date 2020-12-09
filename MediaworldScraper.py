@@ -9,7 +9,8 @@ from utility.FileUtility import *
 
 class MediaworldScraper(GenericScraper):
     __prePathMario = "D:/Mario/Reti geografiche/RetiGeografiche20-21/"
-    __prePAth = __prePathMario
+    __prePathMarioPC2 = "C:/Users/Mario/Desktop/Mario/Progetti/RetiGeografiche20-21/"
+    __prePAth = __prePathMarioPC2
 
     extractor_file = __prePAth + 'files/mediaworld_selector.yml'
     input_file = __prePAth + 'files/mediaworld_product_list.txt'

@@ -1,9 +1,11 @@
 import psycopg2
-from AmazonScraper import AmazonScraper
+from AmazonScraper import AmazonScraper, Prodotto
 from EpriceScraper import EpriceScraper
 import datetime
 import GenericScraper
 from calendar import monthrange
+
+from beans.ProdottoStatistiche import ProdottoStatistiche
 
 
 class DatabaseManager:
@@ -128,7 +130,7 @@ class DatabaseManager:
         Restituisce il range di tate del mese corrente
     '''
     @staticmethod
-    def tuttoIlMese():
+    def getDateTuttoIlMese():
         oggi = str(datetime.date.today())
         anno = oggi[0:4]
         mese = oggi[5:7]
@@ -145,6 +147,26 @@ class DatabaseManager:
         dataFine = datetime.date.today()
         dataInizio = dataFine - datetime.timedelta(31)
         return str(dataInizio), str(dataFine)
+
+    @staticmethod
+    def get_prezzi_tutti_i_prodotti(scraper: GenericScraper, data_inizio: str, data_fine: str = str(datetime.date.today())) -> list:
+        '''
+        :param scraper: Scraper generico che rappresenta l'ecommerce
+        :param data_inizio: Data di inizio di cui si vogliono i dati
+        :param data_fine: Data di fine di cui si vogliono i dati
+        :return: Lista di prodotti con il prezzo minimo, il prezzo massimo e la media
+        '''
+        query = f"SELECT nome, min(prezzo) as prezzo_minimo, max(prezzo) as prezzo_massimo, cast(avg(prezzo) as decimal(9,2)) as media_prezzo"
+        query += f" FROM {DatabaseManager.getTable(scraper)} WHERE prezzo != -1"
+        query += f" AND data BETWEEN '{data_inizio}' AND '{data_fine}'"
+        query += f" GROUP BY nome ORDER BY nome;"
+
+        with DatabaseManager.__conn.cursor() as cursor:
+            cursor.execute(query)
+            rows = cursor.fetchall()
+
+        risultati = [ProdottoStatistiche(elemento[0], elemento[1], elemento[2], elemento[3]) for elemento in rows]
+        return risultati
 
     @staticmethod
     def __getQueryForSelectProduct(tablename: str, nomeProdotto: str, dataInizio: str, dataFine: str, multiplePriceForDay=None):
@@ -177,3 +199,9 @@ class DatabaseManager:
         AND prodottimediaworld.prezzo=R1.prezzo
     ORDER BY data;
     '''
+
+
+if __name__ == "__main__":
+    prodotti = DatabaseManager.get_prezzi_tutti_i_prodotti(AmazonScraper, "2020-11-24", "09-12-2020")
+    for prodotto in prodotti:
+        print(prodotto)

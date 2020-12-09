@@ -1,16 +1,18 @@
 import threading
 import time
+import datetime
 from pathlib import Path
 import matplotlib.pylab as pl
-from utility.DatabaseManager import DatabaseManager
 import GenericScraper
 from AmazonScraper import AmazonScraper
 from EpriceScraper import EpriceScraper
 from MediaworldScraper import MediaworldScraper
 import multiprocessing
-from utility.Ascoltatore import Ascoltatore
-from utility.Ascoltabile import Ascoltabile
 from threading import Thread
+
+from utility.Ascoltabile import Ascoltabile
+from utility.Ascoltatore import Ascoltatore
+from utility.DatabaseManager import DatabaseManager
 
 
 # class GraphicGeneratorAscoltatore(Ascoltatore):
@@ -43,6 +45,7 @@ from threading import Thread
 #                     print(f"Prodotti totali: {self.getTotaleProdotti()}")
 #                     self.__alreadyPrintedTot = True
 #                 self.__threadLock.release()
+
 
 class GraphicGeneratorAscoltatore(Ascoltatore):
 
@@ -191,6 +194,36 @@ class GestoreGrafici(Ascoltabile):
 
         return prezzi
 
+    def controlla_reale_sconto(self):
+        prodotti_black_friday = DatabaseManager.get_prezzi_tutti_i_prodotti(AmazonScraper, "2020-11-19", "2020-11-20")
+        prodotti_dopo = DatabaseManager.get_prezzi_tutti_i_prodotti(AmazonScraper, "2020-11-24")
+        lista_nomi = [prodotto.nome for prodotto in prodotti_black_friday]
+        risultati = []
+
+        for prodotto in prodotti_dopo:
+            if prodotto.nome in lista_nomi:
+                # Il prodotto era disponibile nel black friday
+                risultati.append(prodotto)
+
+        soglia_percentuale = 2
+
+        with open("report.txt", "w", encoding="UTF-8") as file:
+            for prod_dopo, prod_bf in zip(risultati, prodotti_black_friday):
+                differenza = round(prod_dopo.prezzo_minimo - prod_bf.prezzo_minimo, 2)
+                percentuale_sconto_oggi = round((differenza * 100) / prod_dopo.prezzo_minimo, 2)
+
+                if percentuale_sconto_oggi <= soglia_percentuale:
+                    # È uno sconto fake
+                    # print(percentuale_sconto_oggi)
+                    prod_dopo.is_fake_sconto = True
+
+                stringa = f"{prod_dopo.nome}\t{prod_bf.prezzo_minimo}\t{prod_dopo.prezzo_minimo}"
+                stringa += f"\t{percentuale_sconto_oggi}%"
+                stringa += f"\t{differenza}€"
+                stringa += f"\t{prod_dopo.is_fake_sconto}"
+                #print(stringa)
+                file.write(stringa + '\n')
+
     def addListeners(self, listeners: list = Ascoltatore):
         self.__listeners.extend(listeners)
         print(self.__listeners)
@@ -231,20 +264,21 @@ class GraphicGeneratorThread (Thread):
 
 if __name__ == '__main__':
     gestore = GestoreGrafici()
+    gestore.controlla_reale_sconto()
     gestore.addListeners([GraphicGeneratorAscoltatore()])
     scraper = [AmazonScraper, EpriceScraper, MediaworldScraper]
     # scraper = [AmazonScraper]
 
     processes = []
-
-    # COSI' NON CONDIVIDONO LA MEMORIA, E QUINDI OGNI LISTENER HA UNA SUA MEMORIA
+    #
+    # # COSI' NON CONDIVIDONO LA MEMORIA, E QUINDI OGNI LISTENER HA UNA SUA MEMORIA
     for i in range(scraper.__len__()):
         process = multiprocessing.Process(target=worker, args=(scraper[i], gestore))
         processes.append(process)
         process.start()
 
-    # wairForProcess(processes)
-    # gestore.ottieniGrafico(AmazonScraper, "Samsung Galaxy S20+ 5g Tim Cosmic Gray 8gb/128gb Dual Sim", multiplePriceForDay=False)
+    wairForProcess(processes)
+    gestore.ottieniGrafico(AmazonScraper, "Samsung Galaxy S20+ 5g Tim Cosmic Gray 8gb/128gb Dual Sim", multiplePriceForDay=False)
 
     # VERAMENTE CONCORRENTE
     # COSÌ CONDIVIDONO LA MEMORIA E IL LISTENER HA MEMORIA COMUNE
