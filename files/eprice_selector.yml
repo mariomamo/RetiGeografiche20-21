@@ -4,5 +4,7 @@ name:
 price:
     css: '.big'
     type: Text
-
+price_not_available:
+    css: '.dispo'
+    ype: Text
 
