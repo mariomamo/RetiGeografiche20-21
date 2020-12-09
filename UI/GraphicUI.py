@@ -1,7 +1,3 @@
-import time
-
-from threading import Thread
-
 import PySimpleGUI as sg
 import os.path
 from AmazonScraper import AmazonScraper
@@ -10,6 +6,7 @@ from MediaworldScraper import MediaworldScraper
 from utility.DatabaseManager import DatabaseManager
 from grafici import GestoreGrafici
 from utility.Ascoltatore import Ascoltatore
+import webbrowser
 
 # class ProgressBarThread (Thread):
 #     window = None
@@ -22,6 +19,7 @@ from utility.Ascoltatore import Ascoltatore
 #         print("wewe")
 #         while True:
 #             event, values = self.window.read()
+
 
 class ProgressBarListner(Ascoltatore):
     def update(self, operation, *args):
@@ -39,9 +37,8 @@ class ProgressBarListner(Ascoltatore):
             numero_prodotti = args[0][1]
             print(f">>> {scraper} = {numero_prodotti} prodotti")
 
+
 class ProgressWindow():
-
-
     window = None
 
     def long_function_thread(self, window, checked_scraper, datainizio, datafine, multipleprice, missingdata):
@@ -343,6 +340,7 @@ def showgraph():
             except:
                 pass
 
+
 def start():
     button_column = [
         [
@@ -360,15 +358,15 @@ def start():
     ]
 
     logo_viewer_column = [
-        [sg.Image(key="-LOGOIMAGE-", size=(640, 350), filename="../prodottiamazon/God of war.png")],
+        [sg.Image(key="-LOGOIMAGE-", size=(640, 350), filename="../prodottiamazon/God of war.png", enable_events=True)],
     ]
 
     github_viewer_column = [
-        [sg.Image(key="-GITHUBIMAGE-", size=(640, 350), filename="../immagini/github.png")],
+        [sg.Image(key="-GITHUBIMAGE-", size=(640, 350), filename="../immagini/github.png", enable_events=True)],
     ]
 
     doc_viewer_column = [
-        [sg.Image(key="-DOCIMAGE-", size=(640, 350), filename="../prodottiamazon/God of war.png")],
+        [sg.Image(key="-DOCIMAGE-", size=(640, 350), filename="../immagini/documenti.png", enable_events=True)],
     ]
 
     layout = [
@@ -407,6 +405,12 @@ def start():
             window.close()
             generateGraph()
             break
+        elif event == "-DOCIMAGE-":
+            webbrowser.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstleyVEVO', new=2)
+        elif event == "-GITHUBIMAGE-":
+            webbrowser.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstleyVEVO', new=2)
+        elif event == "-LOGOIMAGE-":
+            webbrowser.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstleyVEVO', new=2)
 
 
 if __name__ == '__main__':
