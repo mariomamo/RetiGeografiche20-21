@@ -180,7 +180,7 @@ class GestoreGrafici(Ascoltabile):
         pl.ylabel('Prezzi')
         pl.xlabel('Giorni')
         pl.grid()
-        # pl.xticks(rotation=75)
+        pl.xticks(rotation=75)
         pl.savefig(cartellaOutput + '/' + nomeProdotto + ".png")
         # pl.show()
         pl.close()
@@ -194,7 +194,7 @@ class GestoreGrafici(Ascoltabile):
 
         return prezzi
 
-    def controlla_reale_sconto(self):
+    def controlla_reale_sconto(self, nome_file="report.txt"):
         prodotti_black_friday = DatabaseManager.get_prezzi_tutti_i_prodotti(AmazonScraper, "2020-11-19", "2020-11-20")
         prodotti_dopo = DatabaseManager.get_prezzi_tutti_i_prodotti(AmazonScraper, "2020-11-24")
         lista_nomi = [prodotto.nome for prodotto in prodotti_black_friday]
@@ -207,7 +207,7 @@ class GestoreGrafici(Ascoltabile):
 
         soglia_percentuale = 2
 
-        with open("report.txt", "w", encoding="UTF-8") as file:
+        with open(nome_file, "w", encoding="UTF-8") as file:
             for prod_dopo, prod_bf in zip(risultati, prodotti_black_friday):
                 differenza = round(prod_dopo.prezzo_minimo - prod_bf.prezzo_minimo, 2)
                 percentuale_sconto_oggi = round((differenza * 100) / prod_dopo.prezzo_minimo, 2)

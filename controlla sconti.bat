@@ -1,0 +1,2 @@
+python controlla_sconti.py
+pause
