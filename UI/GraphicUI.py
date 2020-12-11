@@ -1,3 +1,5 @@
+import traceback
+
 import PySimpleGUI as sg
 import os.path
 from AmazonScraper import AmazonScraper
@@ -7,7 +9,7 @@ from utility.DatabaseManager import DatabaseManager
 from grafici import GestoreGrafici
 from utility.Ascoltatore import Ascoltatore
 import webbrowser
-from beans.ProdottoStatistiche import ProdottoStatistiche
+from beans.ProdottoReport import ProdottoReport
 
 # class ProgressBarThread (Thread):
 #     window = None
@@ -290,7 +292,7 @@ def showgraph():
             )
         ],
         [
-          sg.Text("Seleziona il prodotto per ottenere il report", key="-REPORT-")
+          sg.Text("Seleziona il prodotto per ottenere il report", key="-REPORT-", size=(75, 5))
         ],
             back_row
     ]
@@ -348,19 +350,27 @@ def showgraph():
                     window["-CURFOLDER-"].DisplayText, values["-FILE LIST-"][0]
                 )
 
+                print(filename)
+
+                window["-IMAGE-"].update(filename=filename)
                 nomeprodotto = values["-FILE LIST-"][0]
                 nomeprodotto = nomeprodotto[:-4]
                 window["-TOUT-"].update(nomeprodotto)
                 GestoreGrafici.controlla_reale_sconto(directory=os.path.join(os.path.dirname(__file__), os.pardir))
-
-                stats = GestoreGrafici.load_sconto_info(nomeprodotto)
-                window["-REPORT-"].update(f"Report per: {stats.nome}:\nPrezzo black friday: {stats.prezzo_minimo_bf}\n"
-                                          f"Prezzo minimo dopo il Black friday: {stats.prezzo_minimo_dopo}\n"
-                                          f"Differenza: {stats.differenza}, differenza percentuale: {stats.percentuale_sconto}\n"
-                                          f"E' un vero sconto? {stats.is_fake_sconto}")
-                window["-IMAGE-"].update(filename=filename)
-            except:
-                pass
+                path = os.path.join(os.path.dirname(__file__), os.pardir + "\\report.txt")
+                stats = GestoreGrafici.load_sconto_info(nomeprodotto, path)
+                # print(f"stats: {stats}")
+                if stats is not None:
+                    # TODO: Aggiungere report per gli altri e-commerce
+                    window["-REPORT-"].update(f"Report per: {stats.nome}:\n"
+                                              f"Prezzo black friday: {stats.prezzo_bf}€\n"
+                                              f"Prezzo minimo dopo il Black friday: {stats.prezzo_dopo}€\n"
+                                              f"Differenza: {stats.differenza_prezzo}€, differenza percentuale: {stats.percentuale_sconto}%\n"
+                                              f"E' uno scono fake? {stats.is_sconto_fake}")
+                else:
+                    window["-REPORT-"].update(f"Report non disponibile")
+            except Exception as ex:
+                traceback.print_exc()
 
 
 def start():
@@ -380,7 +390,7 @@ def start():
     ]
 
     logo_viewer_column = [
-        [sg.Image(key="-LOGOIMAGE-", size=(640, 350), filename="../prodottiamazon/God of war.png", enable_events=True)],
+        [sg.Image(key="-LOGOIMAGE-", size=(640, 350), filename="../immagini/github.png", enable_events=True)],
     ]
 
     github_viewer_column = [

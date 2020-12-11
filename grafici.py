@@ -11,6 +11,7 @@ from MediaworldScraper import MediaworldScraper
 import multiprocessing
 from threading import Thread
 
+from beans.ProdottoReport import ProdottoReport
 from beans.ProdottoStatistiche import ProdottoStatistiche
 from utility.Ascoltabile import Ascoltabile
 from utility.Ascoltatore import Ascoltatore
@@ -158,7 +159,7 @@ class GestoreGrafici(Ascoltabile):
         # for prodotto in prodotti:
         #     print(prodotto)
 
-        nomeProdotto = self.__normalizza_stringa(nomeProdotto)
+        nomeProdotto = self.normalizza_nome_prodotto(nomeProdotto)
 
         # Creo la cartella se non esiste
         Path(cartella_output).mkdir(parents=True, exist_ok=True)
@@ -172,8 +173,9 @@ class GestoreGrafici(Ascoltabile):
         else:
             return nomeProdotto, date, prezzi, cartella_output, discontinuo
 
-    def __normalizza_stringa(self, nomeProdotto):
-        nomeProdotto = nomeProdotto.replace("\"", "pollici")
+    @staticmethod
+    def normalizza_nome_prodotto(nomeProdotto):
+        nomeProdotto = nomeProdotto.replace("\"", " pollici")
         nomeProdotto = nomeProdotto.replace("''", "'")
         nomeProdotto = nomeProdotto.replace(":", " ")
         nomeProdotto = nomeProdotto.replace("/", "-")
@@ -207,16 +209,14 @@ class GestoreGrafici(Ascoltabile):
         return prezzi
 
     @staticmethod
-    def controlla_reale_sconto(nome_file=DEFAULT_OUTPUT_FILE, directory=None):
-        """
-        Crea un file nel quale scrive se il prodotto era veramente in sconto nel periodo del black friday
-        :param nome_file: nome file di output
-        :return: None
-        """
+    def controlla_reale_sconto(directory=DEFAULT_OUTPUT_FILE):
         prodotti_black_friday = DatabaseManager.get_prezzi_tutti_i_prodotti(AmazonScraper, "2020-11-19", "2020-11-20")
         prodotti_dopo = DatabaseManager.get_prezzi_tutti_i_prodotti(AmazonScraper, "2020-11-24")
         lista_nomi = [prodotto.nome for prodotto in prodotti_black_friday]
         risultati = []
+
+        if directory != GestoreGrafici.DEFAULT_OUTPUT_FILE:
+            directory = os.path.join(directory, GestoreGrafici.DEFAULT_OUTPUT_FILE)
 
         for prodotto in prodotti_dopo:
             if prodotto.nome in lista_nomi:
@@ -225,47 +225,55 @@ class GestoreGrafici(Ascoltabile):
 
         soglia_percentuale = 2
 
-        if directory is not None:
-            nome_file = os.path.join(directory, nome_file)
-
-
-        with open(nome_file, "w", encoding="UTF-8") as file:
+        with open(directory, "w", encoding="UTF-8") as file:
             for prod_dopo, prod_bf in zip(risultati, prodotti_black_friday):
-                differenza = round(prod_dopo.prezzo_minimo_bf - prod_bf.prezzo_minimo_bf, 2)
-                percentuale_sconto_oggi = round((differenza * 100) / prod_dopo.prezzo_minimo_bf, 2)
+                differenza = round(prod_dopo.prezzo_minimo - prod_bf.prezzo_minimo, 2)
+                percentuale_sconto_oggi = round((differenza * 100) / prod_bf.prezzo_minimo, 2)
+                # print(f"diff: {differenza}\n"
+                #       f"\tprod_bf: {prod_bf.prezzo_minimo} - prod_dopo: {prod_bf.prezzo_minimo}\n"
+                #       f"\t{differenza * 100} / {prod_dopo.prezzo_minimo} = {(differenza * 100) / prod_dopo.prezzo_minimo}")
 
                 if percentuale_sconto_oggi <= soglia_percentuale:
                     # È uno sconto fake
                     # print(percentuale_sconto_oggi)
                     prod_dopo.is_fake_sconto = True
 
-                stringa = f"{prod_dopo.nome}\t{prod_bf.prezzo_minimo_bf}\t{prod_dopo.prezzo_minimo_bf}"
-                stringa += f"\t{percentuale_sconto_oggi}%"
-                stringa += f"\t{differenza}€"
+                stringa = f"{GestoreGrafici.normalizza_nome_prodotto(prod_dopo.nome)}\t{prod_bf.prezzo_minimo}\t{prod_dopo.prezzo_minimo}"
+                stringa += f"\t{percentuale_sconto_oggi}"
+                stringa += f"\t{differenza}"
                 stringa += f"\t{prod_dopo.is_fake_sconto}"
-                #print(stringa)
+                # print(stringa)
                 file.write(stringa + '\n')
 
     @staticmethod
-    def load_sconto_info(nome_prodotto: str, nome_file=DEFAULT_OUTPUT_FILE) -> ProdottoStatistiche:
+    def load_sconto_info(nome_prodotto: str, nome_file=DEFAULT_OUTPUT_FILE) -> ProdottoReport:
         # Il confronto viene fatto tutto su lower per evitare errori di typo
         nome_prodotto = nome_prodotto.lower()
 
-        with open(nome_file, "r", encoding="UTF-8") as file:
-            for line in file.readlines():
-                # In posizione 0 c'è il nome del prodotto
-                # print(line.replace("\n", "").split("\t"))
-                valori_prodotto = line.replace("\n", "").split("\t")
-                if valori_prodotto[0].lower() == nome_prodotto:
-                    # Il penultimo valore manca nella lista quindi deve essere 0
-                    prodotto = ProdottoStatistiche(nome=valori_prodotto[0], prezzo_minimo_bf=float(valori_prodotto[1]),
-                                                   prezzo_minimo_dopo=float(valori_prodotto[2]),
-                                                   percentuale_sconto=valori_prodotto[3],
-                                                   differenza=valori_prodotto[4],
-                                                   is_scontato=bool(valori_prodotto[5]))
-                    return prodotto
+        # print(f"file: {nome_file}")
 
-        return ProdottoStatistiche()
+        try:
+            with open(nome_file, "r", encoding="UTF-8") as file:
+                for line in file.readlines():
+                    # In posizione 0 c'è il nome del prodotto
+                    # print(line.replace("\n", "").split("\t"))
+                    valori_prodotto = line.replace("\n", "").split("\t")
+                    if valori_prodotto[0].lower() == nome_prodotto:
+                        # Il penultimo valore manca nella lista quindi deve essere 0
+                        valore = False
+                        if valori_prodotto[5].lower() == "true":
+                            valore = True
+
+                        prodotto = ProdottoReport(valori_prodotto[0], float(valori_prodotto[1]),
+                                                  float(valori_prodotto[2]),
+                                                  float(valori_prodotto[3]),
+                                                  float(valori_prodotto[4]),
+                                                  valore)
+                        return prodotto
+        except Exception as ex:
+            print(ex)
+
+        # return ProdottoReport(*["" for i in range(6)])
 
     def addListeners(self, listeners: list = Ascoltatore):
         self.__listeners.extend(listeners)
@@ -335,4 +343,4 @@ if __name__ == '__main__':
     #     process.join()
 
     # print(GestoreGrafici.load_sconto_info("Apple iPhone 12 bianco (64GB)"))
-
+    # GestoreGrafici.controlla_reale_sconto()

@@ -165,8 +165,10 @@ class DatabaseManager:
             cursor.execute(query)
             rows = cursor.fetchall()
 
-        risultati = [ProdottoStatistiche(nome=elemento[0], prezzo_minimo=elemento[1], prezzo_massimo=elemento[2],
-                                         media=elemento[3]) for elemento in rows]
+        # for elemento in rows:
+        #     print(elemento)
+
+        risultati = [ProdottoStatistiche(elemento[0], elemento[1], elemento[2], elemento[3]) for elemento in rows]
 
         return risultati
 
