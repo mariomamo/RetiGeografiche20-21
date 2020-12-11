@@ -1,3 +1,4 @@
+import os
 import threading
 import time
 import datetime
@@ -10,6 +11,7 @@ from MediaworldScraper import MediaworldScraper
 import multiprocessing
 from threading import Thread
 
+from beans.ProdottoStatistiche import ProdottoStatistiche
 from utility.Ascoltabile import Ascoltabile
 from utility.Ascoltatore import Ascoltatore
 from utility.DatabaseManager import DatabaseManager
@@ -67,6 +69,8 @@ class GraphicGeneratorAscoltatore(Ascoltatore):
 
 class GestoreGrafici(Ascoltabile):
 
+    DEFAULT_OUTPUT_FILE = "report.txt"
+
     def __init__(self):
         self.__listeners = []
 
@@ -115,7 +119,7 @@ class GestoreGrafici(Ascoltabile):
         print(f"{scraper} - FINITONEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE - {cicli} cicli")
 
         self.notify("fine", scraper, ">>>>>> Generazione grafici completata <<<<<<")
-        #return datiRitorno
+        return datiRitorno
 
     def ottieniGrafici(self, scraper: GenericScraper, dataInizio=None, dataFine=None, multiplePriceForDay=False, discontinuo=True):
         tuttiIProdotti = DatabaseManager.selectProduct(scraper, "")
@@ -133,8 +137,15 @@ class GestoreGrafici(Ascoltabile):
 
         self.notify("fine", DatabaseManager.getTable(scraper), ">>>>>> Generazione grafici completata <<<<<<")
 
+    def ottieniGrafico(self, scraper: GenericScraper, nomeProdotto: str, dataInizio=None, dataFine=None,
+                       multiplePriceForDay=False, discontinuo=True, costruisciGrafico = True, folder=None):
 
-    def ottieniGrafico(self, scraper: GenericScraper, nomeProdotto: str, dataInizio=None, dataFine=None, multiplePriceForDay=False, discontinuo=True, costruisciGrafico = True):
+        if folder is not None:
+            cartella_output = os.path.join(folder, DatabaseManager.getTable(scraper))
+        else:
+            cartella_output = DatabaseManager.getTable(scraper)
+
+        # Solo per cercare nel db
         nomeProdotto = nomeProdotto.replace("'", "''")
 
         prodotti = DatabaseManager.selectProduct(scraper, nomeProdotto, dataInizio=dataInizio, dataFine=dataFine, multiplePriceForDay=multiplePriceForDay)
@@ -147,8 +158,21 @@ class GestoreGrafici(Ascoltabile):
         # for prodotto in prodotti:
         #     print(prodotto)
 
-        cartellaOutput = DatabaseManager.getTable(scraper)
+        nomeProdotto = self.__normalizza_stringa(nomeProdotto)
 
+        # Creo la cartella se non esiste
+        Path(cartella_output).mkdir(parents=True, exist_ok=True)
+        # print(cartellaOutput + '/' + nomeProdotto)
+
+        if self.__listeners is not None:
+            self.notify("prezzi", DatabaseManager.getTable(scraper), nomeProdotto)
+
+        if costruisciGrafico:
+            self.costruisciGrafico(nomeProdotto, date, prezzi, cartella_output, discontinuo=discontinuo)
+        else:
+            return nomeProdotto, date, prezzi, cartella_output, discontinuo
+
+    def __normalizza_stringa(self, nomeProdotto):
         nomeProdotto = nomeProdotto.replace("\"", "pollici")
         nomeProdotto = nomeProdotto.replace("''", "'")
         nomeProdotto = nomeProdotto.replace(":", " ")
@@ -156,19 +180,7 @@ class GestoreGrafici(Ascoltabile):
         # nomeProdotto = nomeProdotto.replace("+", "")
         # nomeProdotto = nomeProdotto.replace(".", r".")
 
-        # Creo la cartella se non esiste
-        Path(cartellaOutput).mkdir(parents=True, exist_ok=True)
-        # print(cartellaOutput + '/' + nomeProdotto)
-
-        if self.__listeners is not None:
-            self.notify("prezzi", DatabaseManager.getTable(scraper), nomeProdotto)
-
-        if costruisciGrafico:
-            self.costruisciGrafico(nomeProdotto, date, prezzi, cartellaOutput, discontinuo=discontinuo)
-        else:
-            return nomeProdotto, date, prezzi, cartellaOutput, discontinuo
-
-
+        return nomeProdotto
 
     def costruisciGrafico(self, nomeProdotto: str, date: list, prezzi: list, cartellaOutput: str, discontinuo=False):
         if discontinuo:
@@ -194,7 +206,13 @@ class GestoreGrafici(Ascoltabile):
 
         return prezzi
 
-    def controlla_reale_sconto(self, nome_file="report.txt"):
+    @staticmethod
+    def controlla_reale_sconto(nome_file=DEFAULT_OUTPUT_FILE):
+        """
+        Crea un file nel quale scrive se il prodotto era veramente in sconto nel periodo del black friday
+        :param nome_file: nome file di output
+        :return: None
+        """
         prodotti_black_friday = DatabaseManager.get_prezzi_tutti_i_prodotti(AmazonScraper, "2020-11-19", "2020-11-20")
         prodotti_dopo = DatabaseManager.get_prezzi_tutti_i_prodotti(AmazonScraper, "2020-11-24")
         lista_nomi = [prodotto.nome for prodotto in prodotti_black_friday]
@@ -209,20 +227,41 @@ class GestoreGrafici(Ascoltabile):
 
         with open(nome_file, "w", encoding="UTF-8") as file:
             for prod_dopo, prod_bf in zip(risultati, prodotti_black_friday):
-                differenza = round(prod_dopo.prezzo_minimo - prod_bf.prezzo_minimo, 2)
-                percentuale_sconto_oggi = round((differenza * 100) / prod_dopo.prezzo_minimo, 2)
+                differenza = round(prod_dopo.prezzo_minimo_bf - prod_bf.prezzo_minimo_bf, 2)
+                percentuale_sconto_oggi = round((differenza * 100) / prod_dopo.prezzo_minimo_bf, 2)
 
                 if percentuale_sconto_oggi <= soglia_percentuale:
                     # È uno sconto fake
                     # print(percentuale_sconto_oggi)
                     prod_dopo.is_fake_sconto = True
 
-                stringa = f"{prod_dopo.nome}\t{prod_bf.prezzo_minimo}\t{prod_dopo.prezzo_minimo}"
+                stringa = f"{prod_dopo.nome}\t{prod_bf.prezzo_minimo_bf}\t{prod_dopo.prezzo_minimo_bf}"
                 stringa += f"\t{percentuale_sconto_oggi}%"
                 stringa += f"\t{differenza}€"
                 stringa += f"\t{prod_dopo.is_fake_sconto}"
                 #print(stringa)
                 file.write(stringa + '\n')
+
+    @staticmethod
+    def load_sconto_info(nome_prodotto: str, nome_file=DEFAULT_OUTPUT_FILE) -> ProdottoStatistiche:
+        # Il confronto viene fatto tutto su lower per evitare errori di typo
+        nome_prodotto = nome_prodotto.lower()
+
+        with open(nome_file, "r", encoding="UTF-8") as file:
+            for line in file.readlines():
+                # In posizione 0 c'è il nome del prodotto
+                # print(line.replace("\n", "").split("\t"))
+                valori_prodotto = line.replace("\n", "").split("\t")
+                if valori_prodotto[0].lower() == nome_prodotto:
+                    # Il penultimo valore manca nella lista quindi deve essere 0
+                    prodotto = ProdottoStatistiche(nome=valori_prodotto[0], prezzo_minimo_bf=float(valori_prodotto[1]),
+                                                   prezzo_minimo_dopo=float(valori_prodotto[2]),
+                                                   percentuale_sconto=valori_prodotto[3],
+                                                   differenza=valori_prodotto[4],
+                                                   is_scontato=bool(valori_prodotto[5]))
+                    return prodotto
+
+        return ProdottoStatistiche()
 
     def addListeners(self, listeners: list = Ascoltatore):
         self.__listeners.extend(listeners)
@@ -278,7 +317,7 @@ if __name__ == '__main__':
         process.start()
 
     wairForProcess(processes)
-    gestore.ottieniGrafico(AmazonScraper, "Samsung Galaxy S20+ 5g Tim Cosmic Gray 8gb/128gb Dual Sim", multiplePriceForDay=False)
+    # gestore.ottieniGrafico(AmazonScraper, "Samsung Galaxy S20+ 5g Tim Cosmic Gray 8gb/128gb Dual Sim", multiplePriceForDay=False)
 
     # VERAMENTE CONCORRENTE
     # COSÌ CONDIVIDONO LA MEMORIA E IL LISTENER HA MEMORIA COMUNE
@@ -290,3 +329,6 @@ if __name__ == '__main__':
     #
     # for process in thread:
     #     process.join()
+
+    # print(GestoreGrafici.load_sconto_info("Apple iPhone 12 bianco (64GB)"))
+
