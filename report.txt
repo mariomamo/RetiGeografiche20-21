@@ -6,7 +6,7 @@ Apple iPad Pro Grigio siderale (12,9", Wi-Fi, 128GB)	1095.79	1064.0	-2.99%	-31.7
 Apple iPhone 11 Pro Grigio Siderale (64GB)	910.0	910.0	0.0%	0.0€	True
 Apple iPhone 11 Pro Max Verde Notte (64GB)	979.0	1078.0	9.18%	99.0€	False
 Apple iPhone 12 bianco (64GB)	904.96	879.0	-2.95%	-25.96€	True
-Apple iPhone 12 mini RED (64GB)	839.0	838.0	-0.12%	-1.0€	True
+Apple iPhone 12 mini RED (64GB)	839.0	799.0	-5.01%	-40.0€	True
 Apple iPhone 12 Pro blu Pacifico(128GB)	1189.0	1189.0	0.0%	0.0€	True
 ARIETE Friggitrice ad Aria Airy Fryer	68.4	64.99	-5.25%	-3.41€	True
 Assassin's Creed Valhalla PS4	69.99	69.99	0.0%	0.0€	True
