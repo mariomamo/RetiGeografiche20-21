@@ -7,6 +7,7 @@ from utility.DatabaseManager import DatabaseManager
 from grafici import GestoreGrafici
 from utility.Ascoltatore import Ascoltatore
 import webbrowser
+from beans.ProdottoStatistiche import ProdottoStatistiche
 
 # class ProgressBarThread (Thread):
 #     window = None
@@ -21,32 +22,32 @@ import webbrowser
 #             event, values = self.window.read()
 
 
-class ProgressBarListner(Ascoltatore):
-    def update(self, operation, *args):
-        # Lo stampo solo se è una stringa
-        if operation == "prezzi":
-            try:
-                scraper = args[0][0]
-                messaggio = args[0][1]
-                if isinstance(messaggio, str):
-                    print(scraper, " ---> ", messaggio)
-            except Exception as ex:
-                print("[ECCEZIONE]: ", ex)
-        elif operation == "totprodotti":
-            scraper = args[0][0]
-            numero_prodotti = args[0][1]
-            print(f">>> {scraper} = {numero_prodotti} prodotti")
+# class ProgressBarListner(Ascoltatore):
+#     def update(self, operation, *args):
+#         # Lo stampo solo se è una stringa
+#         if operation == "prezzi":
+#             try:
+#                 scraper = args[0][0]
+#                 messaggio = args[0][1]
+#                 if isinstance(messaggio, str):
+#                     print(scraper, " ---> ", messaggio)
+#             except Exception as ex:
+#                 print("[ECCEZIONE]: ", ex)
+#         elif operation == "totprodotti":
+#             scraper = args[0][0]
+#             numero_prodotti = args[0][1]
+#             print(f">>> {scraper} = {numero_prodotti} prodotti")
 
 
 class ProgressWindow():
     window = None
 
-    def long_function_thread(self, window, checked_scraper, datainizio, datafine, multipleprice, missingdata):
-        progressbarlistner = ProgressBarListner()
-        for scraper in checked_scraper:
-            gestore = GestoreGrafici()
-            gestore.addListeners([progressbarlistner])
-            datiProdottiScraper = gestore.ottieniDatiGrafici(scraper, dataInizio=datainizio, dataFine=datafine, multiplePriceForDay=multipleprice, discontinuo=missingdata)
+    # def long_function_thread(self, window, checked_scraper, datainizio, datafine, multipleprice, missingdata):
+    #     progressbarlistner = ProgressBarListner()
+    #     for scraper in checked_scraper:
+    #         gestore = GestoreGrafici()
+    #         gestore.addListeners([progressbarlistner])
+    #         datiProdottiScraper = gestore.ottieniDatiGrafici(scraper, dataInizio=datainizio, dataFine=datafine, multiplePriceForDay=multipleprice, discontinuo=missingdata)
 
 
     def azzera(self):
@@ -111,12 +112,14 @@ class ProgressWindow():
                 i = 0
                 event, values = self.window.read(timeout=100)
                 scraper = checked_scraper.pop()
+                print(scraper)
                 #gestore.addListeners([progressbarlistner])
                 datiProdottiScraper = gestore.ottieniDatiGrafici(scraper, dataInizio=datainizio, dataFine=datafine, multiplePriceForDay=multipleprice, discontinuo=missingdata)
 
                 for dati in datiProdottiScraper:
                     #print(*dati)
-                    gestore.ottieniGrafico(scraper, dati[0], datainizio, datafine, multipleprice, missingdata, )
+                    folder = os.path.join(os.path.dirname(__file__), os.pardir)
+                    gestore.ottieniGrafico(scraper, dati[0], datainizio, datafine, multipleprice, missingdata, folder)
                     #AGGIORNA
                     print(i)
                     i += 1
@@ -132,10 +135,12 @@ class ProgressWindow():
                 event, values = self.window.read()
 
             if event == 'Chiudi' or event == sg.WIN_CLOSED:
-                self.window.Close()
+                self.window.close()
                 break
             else:
                 print(event, values)
+        generateGraph()
+
         #thread = ProgressBarThread(self.window)
         #thread.start()
 
@@ -242,8 +247,6 @@ def generateGraph():
 
             break
 
-    generateGraph()
-
 
 def getImagesFromFolder(type: str):
     folder = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
@@ -286,14 +289,23 @@ def showgraph():
                 values=[], enable_events=True, size=(75, 20), key="-FILE LIST-"
             )
         ],
-        back_row
+        [
+          sg.Text("Seleziona il prodotto per ottenere il report", key="-REPORT-")
+        ],
+            back_row
     ]
 
     # For now will only show the name of the file that was chosen
     image_viewer_column = [
-        [sg.Text("Seleziona il prodotto da visualizzare sulla sinistra")],
-        [sg.Text(size=(78, 1), key="-TOUT-")],
-        [sg.Image(key="-IMAGE-", size=(640, 480))],
+        [
+            sg.Text("Seleziona il prodotto da visualizzare sulla sinistra")
+        ],
+        [
+            sg.Text(size=(78, 1), key="-TOUT-")
+        ],
+        [
+            sg.Image(key="-IMAGE-", size=(640, 480))
+        ],
     ]
 
     # ----- Full layout -----
@@ -335,7 +347,17 @@ def showgraph():
                 filename = os.path.join(
                     window["-CURFOLDER-"].DisplayText, values["-FILE LIST-"][0]
                 )
-                window["-TOUT-"].update(values["-FILE LIST-"][0])
+
+                nomeprodotto = values["-FILE LIST-"][0]
+                nomeprodotto = nomeprodotto[:-4]
+                window["-TOUT-"].update(nomeprodotto)
+                GestoreGrafici.controlla_reale_sconto(directory=os.path.join(os.path.dirname(__file__), os.pardir))
+
+                stats = GestoreGrafici.load_sconto_info(nomeprodotto)
+                window["-REPORT-"].update(f"Report per: {stats.nome}:\nPrezzo black friday: {stats.prezzo_minimo_bf}\n"
+                                          f"Prezzo minimo dopo il Black friday: {stats.prezzo_minimo_dopo}\n"
+                                          f"Differenza: {stats.differenza}, differenza percentuale: {stats.percentuale_sconto}\n"
+                                          f"E' un vero sconto? {stats.is_fake_sconto}")
                 window["-IMAGE-"].update(filename=filename)
             except:
                 pass

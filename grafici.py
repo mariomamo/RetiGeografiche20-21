@@ -207,7 +207,7 @@ class GestoreGrafici(Ascoltabile):
         return prezzi
 
     @staticmethod
-    def controlla_reale_sconto(nome_file=DEFAULT_OUTPUT_FILE):
+    def controlla_reale_sconto(nome_file=DEFAULT_OUTPUT_FILE, directory=None):
         """
         Crea un file nel quale scrive se il prodotto era veramente in sconto nel periodo del black friday
         :param nome_file: nome file di output
@@ -224,6 +224,10 @@ class GestoreGrafici(Ascoltabile):
                 risultati.append(prodotto)
 
         soglia_percentuale = 2
+
+        if directory is not None:
+            nome_file = os.path.join(directory, nome_file)
+
 
         with open(nome_file, "w", encoding="UTF-8") as file:
             for prod_dopo, prod_bf in zip(risultati, prodotti_black_friday):
