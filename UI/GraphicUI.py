@@ -269,6 +269,8 @@ def getImagesFromFolder(type: str):
 
 
 def showgraph():
+    current_scraper = None
+
     back_row = [
         sg.Button("Indietro"),
         sg.Button("Chiudi"),
@@ -333,14 +335,17 @@ def showgraph():
             break
         # Folder name was filled in, make a list of files in the folder
         elif event == "Amazon":
+            current_scraper = AmazonScraper
             fnames, curfolder = getImagesFromFolder("prodottiamazon")
             window["-CURFOLDER-"].update(curfolder)
             window["-FILE LIST-"].update(fnames)
         elif event == "Eprice":
+            current_scraper = EpriceScraper
             fnames, curfolder = getImagesFromFolder("prodottieprice")
             window["-CURFOLDER-"].update(curfolder)
             window["-FILE LIST-"].update(fnames)
         elif event == "Mediaworld":
+            current_scraper = MediaworldScraper
             fnames, curfolder = getImagesFromFolder("prodottimediaworld")
             window["-CURFOLDER-"].update(curfolder)
             window["-FILE LIST-"].update(fnames)
@@ -356,8 +361,12 @@ def showgraph():
                 nomeprodotto = values["-FILE LIST-"][0]
                 nomeprodotto = nomeprodotto[:-4]
                 window["-TOUT-"].update(nomeprodotto)
-                GestoreGrafici.controlla_reale_sconto(directory=os.path.join(os.path.dirname(__file__), os.pardir))
-                path = os.path.join(os.path.dirname(__file__), os.pardir + "\\report.txt")
+                save_file_name = "report_" + DatabaseManager.getTable(current_scraper) + ".txt"
+                print(save_file_name)
+                save_dir = os.path.join(os.path.dirname(__file__), os.pardir, save_file_name)
+
+                GestoreGrafici.controlla_reale_sconto(current_scraper, directory=save_dir)
+                path = os.path.join(save_dir)
                 stats = GestoreGrafici.load_sconto_info(nomeprodotto, path)
                 # print(f"stats: {stats}")
                 if stats is not None:

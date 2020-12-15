@@ -209,14 +209,14 @@ class GestoreGrafici(Ascoltabile):
         return prezzi
 
     @staticmethod
-    def controlla_reale_sconto(directory=DEFAULT_OUTPUT_FILE):
-        prodotti_black_friday = DatabaseManager.get_prezzi_tutti_i_prodotti(AmazonScraper, "2020-11-19", "2020-11-20")
-        prodotti_dopo = DatabaseManager.get_prezzi_tutti_i_prodotti(AmazonScraper, "2020-11-24")
+    def controlla_reale_sconto(scraper, directory=DEFAULT_OUTPUT_FILE):
+        prodotti_black_friday = DatabaseManager.get_prezzi_tutti_i_prodotti(scraper, "2020-11-19", "2020-11-20")
+        prodotti_dopo = DatabaseManager.get_prezzi_tutti_i_prodotti(scraper, "2020-11-24")
         lista_nomi = [prodotto.nome for prodotto in prodotti_black_friday]
         risultati = []
 
-        if directory != GestoreGrafici.DEFAULT_OUTPUT_FILE:
-            directory = os.path.join(directory, GestoreGrafici.DEFAULT_OUTPUT_FILE)
+        if directory is None:
+            directory = GestoreGrafici.DEFAULT_OUTPUT_FILE
 
         for prodotto in prodotti_dopo:
             if prodotto.nome in lista_nomi:
