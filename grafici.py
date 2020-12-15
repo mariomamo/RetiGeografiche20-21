@@ -10,7 +10,6 @@ from EpriceScraper import EpriceScraper
 from MediaworldScraper import MediaworldScraper
 import multiprocessing
 from threading import Thread
-
 from beans.ProdottoReport import ProdottoReport
 from beans.ProdottoStatistiche import ProdottoStatistiche
 from utility.Ascoltabile import Ascoltabile
@@ -117,7 +116,7 @@ class GestoreGrafici(Ascoltabile):
             self.notify("new_product", scraper, *prod)
             datiRitorno.append(prod)
 
-        print(f"{scraper} - FINITONEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE - {cicli} cicli")
+        # print(f"{scraper} - FINITONEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE - {cicli} cicli")
 
         self.notify("fine", scraper, ">>>>>> Generazione grafici completata <<<<<<")
         return datiRitorno
@@ -315,7 +314,7 @@ class GraphicGeneratorThread (Thread):
 
 if __name__ == '__main__':
     gestore = GestoreGrafici()
-    gestore.controlla_reale_sconto()
+    # gestore.controlla_reale_sconto()
     gestore.addListeners([GraphicGeneratorAscoltatore()])
     scraper = [AmazonScraper, EpriceScraper, MediaworldScraper]
     # scraper = [AmazonScraper]

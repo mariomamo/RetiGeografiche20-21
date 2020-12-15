@@ -123,7 +123,7 @@ class ProgressWindow():
                     folder = os.path.join(os.path.dirname(__file__), os.pardir)
                     gestore.ottieniGrafico(scraper, dati[0], datainizio, datafine, multipleprice, missingdata, folder)
                     #AGGIORNA
-                    print(i)
+                    # print(i)
                     i += 1
                     tot = (1000/len(datiProdottiScraper)) * i
                     if scraper == AmazonScraper:
@@ -180,8 +180,8 @@ def generateGraph():
         ],
         [
             sg.Text("Misurazioni multiple", size=(20, 0)),
-            sg.Radio("Tutti", "misurazioni", default=True, enable_events=True, key='mistutti'),
-            sg.Radio("Minore", "misurazioni", enable_events=True, key='mismin'),
+            sg.Radio("Tutti", "misurazioni", enable_events=True, key='mistutti'),
+            sg.Radio("Minore", "misurazioni", default=True, enable_events=True, key='mismin'),
 
         ],
 
