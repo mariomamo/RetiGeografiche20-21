@@ -83,14 +83,14 @@ class GestoreGrafici(Ascoltabile):
 
     def __ottieniData(self, prodotti: list) -> list:
         date = list()
-        last_month = "0"
+        # last_month = "0"
         for prodotto in prodotti:
             data = prodotto[prodotto.__len__() - 1]
-            if last_month == data.strftime("%m"):
-                data = data.strftime('%d')
-            else:
-                last_month = data.strftime("%m")
-                data = data.strftime('%d/%m')
+            # if last_month == data.strftime("%m"):
+            #     data = data.strftime('%d')
+            # else:
+            #     last_month = data.strftime("%m")
+            data = data.strftime('%d/%m')
             date.append(data)
 
         return date

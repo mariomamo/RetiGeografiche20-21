@@ -41,10 +41,10 @@ Samsung Galaxy Buds Live Auricolari True Wireless Mystic Black	121.63	122.5	0.72
 Samsung Galaxy Note20 Ultra Mystic Black 5G	1099.0	959.99	-12.65	-139.01	True
 Samsung Galaxy S10 Smartphone Prism Black	497.0	497.0	0.0	0.0	True
 Samsung Galaxy S20+ 128GB Cosmic Black	689.01	640.0	-7.11	-49.01	True
-Samsung Galaxy S20+ 5g Tim Cosmic Gray 8gb-128gb Dual Sim	1098.9	1006.0	-8.45	-92.9	True
+Samsung Galaxy S20+ 5g Tim Cosmic Gray 8gb-128gb Dual Sim	1098.9	895.0	-18.55	-203.9	True
 Samsung Galaxy Tab S7+ Tablet S Pen Mystic Black	1070.0	999.0	-6.64	-71.0	True
 Samsung Galaxy Watch3 Mystic Silver	339.9	339.9	0.0	0.0	True
-SAMSUNG Galaxy Z Flip 5G Nero	1489.0	1399.0	-6.04	-90.0	True
+SAMSUNG Galaxy Z Flip 5G Nero	1489.0	949.0	-36.27	-540.0	True
 SAMSUNG SSD 500 GB Serie 860	58.49	59.9	2.41	1.41	False
 Seagate Game Drive per Xbox 2TB	82.8	82.8	0.0	0.0	True
 Seagate Game Drive per Xbox 4TB	133.56	101.99	-23.64	-31.57	True
