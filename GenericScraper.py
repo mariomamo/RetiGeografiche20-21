@@ -42,7 +42,7 @@ class GenericScraper:
             self.request = self.makeRequest(prodotto.url)
 
             # Se viene eseguito qualche redirect strano chiama la funzione onRedirect
-            if prodotto.url != self.request.url:
+            if self.request is not None and prodotto.url != self.request.url:
                 # Se onRedirect restituisce True si continua la richiesta
                 if self.onRedirect():
                     result = self.continuaRichiesta(prodotto, i, prodotti, result)
@@ -66,7 +66,7 @@ class GenericScraper:
             self.waitRequest(self.richieste_effettuate)
             self.request = self.makeRequest(prodotto.url)
 
-        if self.request.status_code == 200:
+        if self.request is not None and self.request.status_code == 200:
             # La richiesta è andata bene
             self.requestOk()
             # Crea l'estrattore per fare webscrape
@@ -140,13 +140,12 @@ class GenericScraper:
             print("TENTATIVO ", numeroRichiesta)
 
     def makeRequest(self, url: str):
-        request = requests.get(url, headers=self.headers)
-        # try:
-        #     request = requests.get(url, headers=self.headers)
-        # except:
-        #     print("ERRORE RICHIESTA")
-
-        return request
+        # request = requests.get(url, headers=self.headers)
+        try:
+            return requests.get(url, headers=self.headers)
+        except:
+            print(f"Errore richiesta per {url}")
+            return None
 
     def onRedirect(self):
         return True
