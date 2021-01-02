@@ -368,9 +368,7 @@ def showgraph():
                 GestoreGrafici.controlla_reale_sconto(current_scraper, directory=save_dir)
                 path = os.path.join(save_dir)
                 stats = GestoreGrafici.load_sconto_info(nomeprodotto, path)
-                # print(f"stats: {stats}")
                 if stats is not None:
-                    # TODO: Aggiungere report per gli altri e-commerce
                     window["-REPORT-"].update(f"Report per: {stats.nome}:\n"
                                               f"Prezzo black friday: {stats.prezzo_bf}€\n"
                                               f"Prezzo minimo dopo il Black friday: {stats.prezzo_dopo}€\n"
