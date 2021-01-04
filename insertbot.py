@@ -280,5 +280,5 @@ class Bot:
 
 
 if __name__ == '__main__':
-    bot = Bot("1466924804:AAH9TTIz-jwPi0bqDBmAICA-Oygqx9gxr8Y")
+    bot = Bot(sys.argv[0])
     bot.start_bot()

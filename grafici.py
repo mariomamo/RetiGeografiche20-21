@@ -149,7 +149,7 @@ class GestoreGrafici(Ascoltabile):
         nomeProdotto = nomeProdotto.replace("'", "''")
 
         prodotti = DatabaseManager.selectProduct(scraper, nomeProdotto, dataInizio=dataInizio, dataFine=dataFine, multiplePriceForDay=multiplePriceForDay)
-        prezzi = self.__ottieniPrezzi(prodotti)
+        prezzi = self.  __ottieniPrezzi(prodotti)
         date = self.__ottieniData(prodotti)
 
         # print(prezzi)
@@ -210,7 +210,7 @@ class GestoreGrafici(Ascoltabile):
     @staticmethod
     def controlla_reale_sconto(scraper, directory=DEFAULT_OUTPUT_FILE):
         prodotti_black_friday = DatabaseManager.get_prezzi_tutti_i_prodotti(scraper, "2020-11-26", "2020-11-27")
-        prodotti_dopo = DatabaseManager.get_prezzi_tutti_i_prodotti(scraper, "2020-12-01")
+        prodotti_dopo = DatabaseManager.get_prezzi_tutti_i_prodotti(scraper, "2020-11-28", "2020-12-26")
         lista_nomi = [prodotto.nome for prodotto in prodotti_black_friday]
         risultati = []
 
@@ -282,7 +282,7 @@ class GestoreGrafici(Ascoltabile):
 
 
 def worker(scraper: GenericScraper, gestore: GestoreGrafici) -> None:
-    gestore.ottieniGrafici(scraper)
+    gestore.ottieniGrafici(scraper, dataInizio='18/11/2020', dataFine='26/12/2020')
     # tuttiIProdotti = DatabaseManager.selectProduct(scraper, "")
     # for prodotto in tuttiIProdotti:
     #     # nomeProdotto = prodotto[1][0:prodotto[1].__len__() - 1]

@@ -5,7 +5,7 @@ from utility.FileUtility import *
 class EpriceScraper(GenericScraper):
     __prePathMario = "D:/Mario/Reti geografiche/RetiGeografiche20-21/"
     __prePathMarioPC2 = "C:/Users/Mario/Desktop/Mario/Progetti/RetiGeografiche20-21/"
-    __prePAth = __prePathMarioPC2
+    __prePAth = __prePathMario
 
     # TODO: mettere i path relativi
     extractor_file = __prePAth + 'files/eprice_selector.yml'

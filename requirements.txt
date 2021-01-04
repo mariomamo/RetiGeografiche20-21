@@ -7,3 +7,4 @@ matplotlib==3.3.3
 psycopg2==2.8.6
 PySimpleGUI==4.32.1
 telegram==0.0.1
+python-telegram-bot==11.1

@@ -1,52 +1,52 @@
-Apple iPad Air Celeste (10,9 pollici, Wi-Fi, 64GB)	666.0	625.0	-6.16	-41.0	True
-Apple iPad Grigio Siderale (10,2 pollici, Wi-Fi, 32GB)	380.21	389.0	2.31	8.79	False
-Apple iPad mini 5 Grigio Siderale (Wi-Fi, 64GB)	400.0	398.99	-0.25	-1.01	True
-Apple iPad Pro Argento (11 pollici, Wi-Fi, 128GB)	858.45	832.9	-2.98	-25.55	True
+Apple iPad Air Celeste (10,9 pollici, Wi-Fi, 64GB)	625.0	681.99	9.12	56.99	False
+Apple iPad Grigio Siderale (10,2 pollici, Wi-Fi, 32GB)	389.0	389.0	0.0	0.0	True
+Apple iPad mini 5 Grigio Siderale (Wi-Fi, 64GB)	398.99	398.99	0.0	0.0	True
+Apple iPad Pro Argento (11 pollici, Wi-Fi, 128GB)	855.0	832.9	-2.58	-22.1	True
 Apple iPad Pro Grigio siderale (12,9 pollici, Wi-Fi, 128GB)	1069.0	1006.88	-5.81	-62.12	True
-Apple iPhone 11 Nero (64GB)	614.52	616.87	0.38	2.35	True
-Apple iPhone 11 Pro Grigio Siderale (64GB)	857.9	868.25	1.21	10.35	True
-Apple iPhone 11 Pro Max Argento(64GB)	1099.9	1006.25	-8.51	-93.65	True
-Apple iPhone 12 Grafite (128GB)	1385.0	1212.0	-12.49	-173.0	True
-Apple iPhone 12 mini nero(64GB)	776.25	753.25	-2.96	-23.0	True
-Apple iPhone 12 Pro Max Blu pacifico (128GB)	1342.99	1335.0	-0.59	-7.99	True
-ARIETE Friggitrice ad Aria Airy Fryer	68.98	61.25	-11.21	-7.73	True
-Assassin's Creed Valhalla PS4	59.99	56.41	-5.97	-3.58	True
-Candy CMXG20DR Microonde	101.99	85.16	-16.5	-16.83	True
-CANON Kit Fotocamera EOS 2000D	369.99	378.99	2.43	9.0	False
-Crash Bandicoot 4	57.99	43.99	-24.14	-14.0	True
-Cyberpunk 2077 XboxOne	70.99	64.98	-8.47	-6.01	True
+Apple iPhone 11 Nero (64GB)	616.87	620.1	0.52	3.23	True
+Apple iPhone 11 Pro Grigio Siderale (64GB)	886.5	868.25	-2.06	-18.25	True
+Apple iPhone 11 Pro Max Argento(64GB)	1099.9	949.0	-13.72	-150.9	True
+Apple iPhone 12 Grafite (128GB)	1385.0	1237.99	-10.61	-147.01	True
+Apple iPhone 12 mini nero(64GB)	779.98	753.25	-3.43	-26.73	True
+Apple iPhone 12 Pro Max Blu pacifico (128GB)	1458.04	1335.0	-8.44	-123.04	True
+ARIETE Friggitrice ad Aria Airy Fryer	67.98	61.25	-9.9	-6.73	True
+Assassin's Creed Valhalla PS4	61.51	56.41	-8.29	-5.1	True
+Candy CMXG20DR Microonde	89.03	95.3	7.04	6.27	False
+CANON Kit Fotocamera EOS 2000D	383.76	378.99	-1.24	-4.77	True
+Crash Bandicoot 4	43.99	49.99	13.64	6.0	False
+Cyberpunk 2077 XboxOne	64.98	61.99	-4.6	-2.99	True
 dji Mavic Air 2 Fly more	995.0	995.0	0.0	0.0	True
 FIFA 21 PS4	39.99	39.99	0.0	0.0	True
-GIGABYTE GeForce RTX 2070 Super	643.48	606.99	-5.67	-36.49	True
-God of War Hits	16.98	10.9	-35.81	-6.08	True
-Horizon Zero Dawn PS4	19.98	9.48	-52.55	-10.5	True
+GIGABYTE GeForce RTX 2070 Super	606.99	606.99	0.0	0.0	True
+God of War Hits	10.9	10.9	0.0	0.0	True
+Horizon Zero Dawn PS4	10.65	9.48	-10.99	-1.17	True
 HUAWEI MatePad T 10	171.99	153.98	-10.47	-18.01	True
-INTEL Processore Core i9-9900KF	376.6	345.97	-8.13	-30.63	True
-iPhone 12 Verde	1040.99	850.1	-18.34	-190.89	True
-iRobot Roomba 676 aspirapolvere	281.55	255.41	-9.28	-26.14	True
-LG Lavatrice	308.99	290.62	-5.95	-18.37	True
-LOGITECH G203 Prodigy 3	32.99	24.99	-24.25	-8.0	True
-LOGITECH G502	55.25	38.99	-29.43	-16.26	True
+INTEL Processore Core i9-9900KF	345.97	372.25	7.6	26.28	False
+iPhone 12 Verde	878.9	850.1	-3.28	-28.8	True
+iRobot Roomba 676 aspirapolvere	256.6	255.41	-0.46	-1.19	True
+LG Lavatrice	299.99	290.62	-3.12	-9.37	True
+LOGITECH G203 Prodigy 3	24.99	31.99	28.01	7.0	False
+LOGITECH G502	38.99	48.99	25.65	10.0	False
 LOGITECH Mouse MX Master 3	79.99	79.99	0.0	0.0	True
-Marvel's Spider-Man PS4	29.9	19.99	-33.14	-9.91	True
-MSI GeForce RTX 2060	348.62	353.99	1.54	5.37	True
-NIKON D5600 Nero	599.0	599.0	0.0	0.0	True
-NILOX Monopattino Elettrico Doc Twelve Plus	583.99	581.99	-0.34	-2.0	True
+Marvel's Spider-Man PS4	19.99	19.99	0.0	0.0	True
+MSI GeForce RTX 2060	366.0	374.99	2.46	8.99	False
+NIKON D5600 Nero	599.0	681.61	13.79	82.61	False
+NILOX Monopattino Elettrico Doc Twelve Plus	588.99	588.99	0.0	0.0	True
 OnePlus 6t 128GB Nero	599.0	599.0	0.0	0.0	True
 OnePlus 8 NORD Onyx Grey 256GB	465.51	453.4	-2.6	-12.11	True
 OnePlus 8 Pro Verde 256GB	822.53	810.77	-1.43	-11.76	True
-PARROT AR. Drone 2.0 Elite	195.71	143.78	-26.53	-51.93	True
+PARROT AR. Drone 2.0 Elite	143.78	143.78	0.0	0.0	True
 POLAROID Fotocamera Istantanea Snap Touch Azzurro	177.5	177.5	0.0	0.0	True
-QLIMA Stufa a Pellet Fiorina	571.99	571.99	0.0	0.0	True
+QLIMA Stufa a Pellet Fiorina	571.99	599.0	4.72	27.01	False
 Russell Hobbs Bollitore	41.99	37.99	-9.53	-4.0	True
-Samsung Galaxy Buds Live Auricolari True Wireless Mystic Black	129.0	102.35	-20.66	-26.65	True
-Samsung Galaxy Note20 Ultra Mystic Black 5G	1177.0	1001.5	-14.91	-175.5	True
-Samsung Galaxy S10 Smartphone Prism Black 128GB	544.0	544.0	0.0	0.0	True
-Samsung Galaxy S20 5G Grigio 12GB	905.7	778.5	-14.04	-127.2	True
-Samsung Galaxy S20+ 128GB Cosmic Black	694.84	694.84	0.0	0.0	True
-Samsung Galaxy Tab S7+ Tablet S Pen Mystic Black	660.47	632.2	-4.28	-28.27	True
-Samsung Galaxy Watch3 Nero	398.99	376.92	-5.53	-22.07	True
-SAMSUNG Galaxy Z Flip 5G Grigio	1429.46	989.0	-30.81	-440.46	True
+Samsung Galaxy Buds Live Auricolari True Wireless Mystic Black	107.38	102.35	-4.68	-5.03	True
+Samsung Galaxy Note20 Ultra Mystic Black 5G	1034.06	1001.5	-3.15	-32.56	True
+Samsung Galaxy S10 Smartphone Prism Black 128GB	544.0	557.31	2.45	13.31	False
+Samsung Galaxy S20 5G Grigio 12GB	852.39	778.5	-8.67	-73.89	True
+Samsung Galaxy S20+ 128GB Cosmic Black	720.0	694.84	-3.49	-25.16	True
+Samsung Galaxy Tab S7+ Tablet S Pen Mystic Black	632.2	632.2	0.0	0.0	True
+Samsung Galaxy Watch3 Nero	376.92	399.99	6.12	23.07	False
+SAMSUNG Galaxy Z Flip 5G Grigio	1409.0	989.0	-29.81	-420.0	True
 SAMSUNG SSD 500 GB Serie 860	59.99	59.99	0.0	0.0	True
-Star Wars - Millennium Falcon LEGO	148.62	148.62	0.0	0.0	True
-WHIRLPOOL Frigorifero	401.99	371.99	-7.46	-30.0	True
+Star Wars - Millennium Falcon LEGO	156.53	161.12	2.93	4.59	False
+WHIRLPOOL Frigorifero	371.99	371.99	0.0	0.0	True

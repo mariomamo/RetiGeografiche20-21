@@ -10,7 +10,7 @@ from utility.FileUtility import *
 class MediaworldScraper(GenericScraper):
     __prePathMario = "D:/Mario/Reti geografiche/RetiGeografiche20-21/"
     __prePathMarioPC2 = "C:/Users/Mario/Desktop/Mario/Progetti/RetiGeografiche20-21/"
-    __prePAth = __prePathMarioPC2
+    __prePAth = __prePathMario
 
     extractor_file = __prePAth + 'files/mediaworld_selector.yml'
     input_file = __prePAth + 'files/mediaworld_product_list.txt'
@@ -96,8 +96,8 @@ class MediaworldScraper(GenericScraper):
             print("MEDIAWORLD: ASPETTO {} SECONDI".format(self.__404_sleep_time * self.__try_404))
             time.sleep(self.__404_sleep_time * self.__try_404)
             self.__try_404 += 1
-        # Se dopo __maximum_try_404 volte non si riesce, si fallisce
         else:
+            # Se dopo __maximum_try_404 volte non si riesce, si fallisce
             self.__try_404 = 1
 
     '''Azzero la variabile __try_404 se la richiesta è andata a buon fine'''

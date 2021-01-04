@@ -34,8 +34,6 @@ class GenericScraper:
     def scrape(self, prodotti: list) -> list:
         i = 0
         result = []
-
-        # params è una lista di prodotti
         for prodotto in prodotti:
             # Eseguo la richiesta per prelevare i dati
             # request contiene la risposta
@@ -105,7 +103,8 @@ class GenericScraper:
             print(f"{prodotto.nome} - {prodotto.url} = € {prodotto.prezzo} ")
 
             # Qui dovrei avvisare il main e passargli i valori
-            if i < prodotti.__len__() - 1: time.sleep(self.deelay_time)
+            if i < prodotti.__len__() - 1:
+                    time.sleep(self.deelay_time)
             i += 1
 
             result.append(prodotto)
