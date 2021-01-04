@@ -397,7 +397,7 @@ def start():
     ]
 
     logo_viewer_column = [
-        [sg.Image(key="-LOGOIMAGE-", size=(640, 350), filename="../immagini/github.png", enable_events=True)],
+        [sg.Image(key="-LOGOIMAGE-", size=(640, 350), filename="../immagini/copertina.png", enable_events=True)],
     ]
 
     github_viewer_column = [

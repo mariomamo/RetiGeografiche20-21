@@ -209,8 +209,8 @@ class GestoreGrafici(Ascoltabile):
 
     @staticmethod
     def controlla_reale_sconto(scraper, directory=DEFAULT_OUTPUT_FILE):
-        prodotti_black_friday = DatabaseManager.get_prezzi_tutti_i_prodotti(scraper, "2020-11-19", "2020-11-20")
-        prodotti_dopo = DatabaseManager.get_prezzi_tutti_i_prodotti(scraper, "2020-11-24")
+        prodotti_black_friday = DatabaseManager.get_prezzi_tutti_i_prodotti(scraper, "2020-11-26", "2020-11-27")
+        prodotti_dopo = DatabaseManager.get_prezzi_tutti_i_prodotti(scraper, "2020-12-01")
         lista_nomi = [prodotto.nome for prodotto in prodotti_black_friday]
         risultati = []
 
@@ -228,13 +228,8 @@ class GestoreGrafici(Ascoltabile):
             for prod_dopo, prod_bf in zip(risultati, prodotti_black_friday):
                 differenza = round(prod_dopo.prezzo_minimo - prod_bf.prezzo_minimo, 2)
                 percentuale_sconto_oggi = round((differenza * 100) / prod_bf.prezzo_minimo, 2)
-                # print(f"diff: {differenza}\n"
-                #       f"\tprod_bf: {prod_bf.prezzo_minimo} - prod_dopo: {prod_bf.prezzo_minimo}\n"
-                #       f"\t{differenza * 100} / {prod_dopo.prezzo_minimo} = {(differenza * 100) / prod_dopo.prezzo_minimo}")
 
                 if percentuale_sconto_oggi <= soglia_percentuale:
-                    # È uno sconto fake
-                    # print(percentuale_sconto_oggi)
                     prod_dopo.is_fake_sconto = True
 
                 stringa = f"{GestoreGrafici.normalizza_nome_prodotto(prod_dopo.nome)}\t{prod_bf.prezzo_minimo}\t{prod_dopo.prezzo_minimo}"
