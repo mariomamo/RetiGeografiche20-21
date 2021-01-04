@@ -1,10 +1,9 @@
 psycopg2_binary==2.8.6
-~atplotlib==2.2.5
-python_telegram_bot==12.8
-requests==2.24.0
+python_telegram_bot==13.1
+requests==2.25.1
 selectorlib==0.16.0
 matplotlib==3.3.3
 psycopg2==2.8.6
-PySimpleGUI==4.32.1
+PySimpleGUI==4.33.0
 telegram==0.0.1
-python-telegram-bot==11.1
+urllib3==1.26.2

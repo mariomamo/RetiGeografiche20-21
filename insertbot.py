@@ -1,4 +1,5 @@
 import logging
+import sys
 from telegram.ext import CommandHandler, MessageHandler, Filters, Updater, CallbackContext, CallbackQueryHandler
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from utility import FileUtility
@@ -280,5 +281,8 @@ class Bot:
 
 
 if __name__ == '__main__':
-    bot = Bot(sys.argv[0])
-    bot.start_bot()
+    try:
+        bot = Bot(sys.argv[1])
+        bot.start_bot()
+    except Exception as ex:
+        print("Please enter a valid Token")
